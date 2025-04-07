@@ -14,7 +14,6 @@ def main():
     search.register_subcommand(subparsers)
     login.register_subcommand(subparsers)
 
-
     args = parser.parse_args()
 
     if hasattr(args, "func"):

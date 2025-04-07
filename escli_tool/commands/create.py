@@ -13,6 +13,7 @@ def register_subcommand(subparsers):
     parser.add_argument("--doc", help="插入文档(json 字符串或文件)")
     parser.set_defaults(func=run)
 
+
 def run(args):
     handler = DataHandler()
     handler.index_name = args.index
@@ -24,6 +25,7 @@ def run(args):
     if args.doc:
         doc = _load_json(args.doc)
         handler.insert_document(doc)
+
 
 def _load_json(content):
     if os.path.exists(content):

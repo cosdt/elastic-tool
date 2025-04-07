@@ -1,7 +1,11 @@
 import os
 from typing import TYPE_CHECKING, Any, Callable
 
-VLLM_SCHEMA = {'vllm_benchmark_serving', 'vllm_benchmark_latency', 'vllm_benchmark_throughput'}
+VLLM_SCHEMA = {
+    "vllm_benchmark_serving",
+    "vllm_benchmark_latency",
+    "vllm_benchmark_throughput",
+}
 
 
 if TYPE_CHECKING:
@@ -15,15 +19,11 @@ def get_default_config_root():
         os.path.join(os.path.expanduser("~"), ".config"),
     )
 
-environment_variables: dict[str, Callable[[], Any]] = {
-    'ES_CONFIG_ROOT':
-    lambda: os.path.expanduser(
-        os.getenv(
-            'ES_CONFIG_ROOT',
-            os.path.join(get_default_config_root(), 'escli')
-        )
-    )
 
+environment_variables: dict[str, Callable[[], Any]] = {
+    "ES_CONFIG_ROOT": lambda: os.path.expanduser(
+        os.getenv("ES_CONFIG_ROOT", os.path.join(get_default_config_root(), "escli"))
+    )
 }
 
 
