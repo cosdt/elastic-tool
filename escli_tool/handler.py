@@ -21,6 +21,7 @@ class DataHandler():
         }
         self.domain = ES_OM_DOMAIN
         self._index_name = "vllm_benchmarks"
+        self._validate_connection()
 
     @property
     def index_name(self):
@@ -30,6 +31,23 @@ class DataHandler():
     @index_name.setter
     def index_name(self, value: str):
         self._index_name = value
+
+    def _validate_connection(self):
+        """尝试请求 _cluster/health 接口判断连接是否成功。"""
+        try:
+            resp = requests.get(
+                f"{self.domain}/_cluster/health",
+                headers=self.headers,
+                verify=False,
+                timeout=5,
+            )
+            if resp.status_code == 200:
+                logger.info("✅ 成功连接到 Elasticsearch 实例")
+            else:
+                logger.warning(f"⚠️ 无法验证登录状态: {resp.status_code}, {resp.text}")
+        except Exception as e:
+            logger.error(f"❌ 登录验证失败: {e}")
+            raise ConnectionError(f"无法连接到 {self.domain}，请检查配置或重新 login")
 
 
     def create_table_with_property_type(self, property_type: dict):
