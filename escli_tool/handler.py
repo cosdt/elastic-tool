@@ -4,22 +4,22 @@ import requests
 import json
 import logging
 
+from escli_tool.data import common
+from escli_tool.utils import read_from_json
+
+
+ES_CONFIG_ROOT = common.environment_variables['ES_CONFIG_ROOT']()
 
 logger = logging.getLogger()
 
-ES_OM_DOMAIN = os.getenv("ES_OM_DOMAIN")
-ES_OM_AUTHORIZATION = os.getenv("ES_OM_AUTHORIZATION")
-
-print(ES_OM_DOMAIN)
-print(ES_OM_AUTHORIZATION)
 
 class DataHandler():
-    def __init__(self):
+    def __init__(self, domain: str, authorization: str):
         self.headers = {
             "Content-Type": "application/x-ndjson",
-            "Authorization": ES_OM_AUTHORIZATION
+            "Authorization": authorization
         }
-        self.domain = ES_OM_DOMAIN
+        self.domain = domain
         self._index_name = "vllm_benchmarks"
         self._validate_connection()
 
@@ -49,6 +49,11 @@ class DataHandler():
             logger.error(f"❌ 登录验证失败: {e}")
             raise ConnectionError(f"无法连接到 {self.domain}，请检查配置或重新 login")
 
+    @classmethod
+    def from_config(cls, config_path: str=ES_CONFIG_ROOT):
+        config = read_from_json(config_path)
+        
+        
 
     def create_table_with_property_type(self, property_type: dict):
         try:

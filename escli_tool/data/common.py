@@ -1,1 +1,46 @@
+import os
+from typing import Callable, Any, TYPE_CHECKING
+
 VLLM_SCHEMA = ['vllm_benchmark_serving', 'vllm_benchmark_latency', 'vllm_benchmark_throughput']
+
+
+if TYPE_CHECKING:
+    ES_CACHE_ROOT: str = os.path.expanduser("~/.cache/escli")
+    ES_CONFIG_ROOT: str = os.path.expanduser("~/.config/escli")
+    VLLM_SCHEMA: set = {'vllm_benchmark_serving', 'vllm_benchmark_latency', 'vllm_benchmark_throughput'}
+
+
+def get_default_config_root():
+    return os.getenv(
+        "ES_CONFIG_HOME",
+        os.path.join(os.path.expanduser("~"), ".config"),
+    )
+
+environment_variables: dict[str, Callable[[], Any]] = {
+    'ES_CONFIG_ROOT':
+    lambda: os.path.expanduser(
+        os.getenv(
+            'ES_CONFIG_ROOT',
+            os.path.join(get_default_config_root(), 'escli')
+        )
+    )
+
+}
+
+
+def __getattr__(name: str):
+    # lazy evaluation of environment variables
+    if name in environment_variables:
+        return environment_variables[name]()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__():
+    return list(environment_variables.keys())
+
+
+def is_set(name: str):
+    """Check if an environment variable is explicitly set."""
+    if name in environment_variables:
+        return name in os.environ
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
