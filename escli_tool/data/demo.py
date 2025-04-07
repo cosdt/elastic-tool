@@ -1,5 +1,6 @@
-from escli_tool.handler import DataHandler
 import os
+
+from escli_tool.handler import DataHandler
 
 domain = os.getenv('ES_OM_DOMAIN')
 au = os.getenv('ES_OM_AUTHORIZATION')

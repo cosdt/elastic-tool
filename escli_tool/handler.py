@@ -1,12 +1,12 @@
-from typing import List
-import os
-import requests
 import json
+import os
+from typing import List
+
+import requests
 import urllib3
 
 from escli_tool.data import common
-from escli_tool.utils import read_from_json, get_logger, load_credentials
-
+from escli_tool.utils import get_logger, load_credentials, read_from_json
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 

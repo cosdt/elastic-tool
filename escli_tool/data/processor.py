@@ -1,14 +1,13 @@
+import json
+import os
+import re
+from argparse import ArgumentParser
 from calendar import c
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
+from datetime import datetime
 from pathlib import Path
 from sys import flags
-import re
-from typing import List, Dict, Union
-import os
-import json
-from datetime import datetime
-from argparse import ArgumentParser
-
+from typing import Dict, List, Union
 
 cli_parser = ArgumentParser()
 

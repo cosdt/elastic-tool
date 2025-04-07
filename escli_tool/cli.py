@@ -1,7 +1,9 @@
 # escli_tool/cli.py
 
 import argparse
-from escli_tool.commands import search, create, delete, update, login
+
+from escli_tool.commands import create, delete, login, search, update
+
 
 def main():
     parser = argparse.ArgumentParser(prog="escli", description="Elastic CLI 工具")

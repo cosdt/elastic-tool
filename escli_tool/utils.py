@@ -1,8 +1,8 @@
-import os
 import json
+import logging
+import os
 from pathlib import Path
 from typing import Union
-import logging
 
 import keyring
 
@@ -12,7 +12,6 @@ def read_from_json(file_path: Union[str, Path]):
         data = json.load(f)
         return data
 
-
 def get_logger():
     logging.basicConfig(
         level=logging.INFO,
@@ -20,7 +19,6 @@ def get_logger():
         )
     logger = logging.getLogger()
     return logger
-
 
 def save_credentials(domain: str, token: str):
     keyring.set_password("escli", "domain", domain)

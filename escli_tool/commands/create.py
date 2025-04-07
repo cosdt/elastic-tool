@@ -1,8 +1,10 @@
 # escli_tool/commands/create.py
 
-from escli_tool.handler import DataHandler
 import json
 import os
+
+from escli_tool.handler import DataHandler
+
 
 def register_subcommand(subparsers):
     parser = subparsers.add_parser("create", help="创建索引或插入文档")

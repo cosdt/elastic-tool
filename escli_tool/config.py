@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 CONFIG_DIR = os.path.expanduser("~/.escli")
 CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
