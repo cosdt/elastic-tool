@@ -1,6 +1,7 @@
 from escli_tool.handler import DataHandler
-from escli_tool.config import save_config
+from escli_tool.utils import get_logger, save_credentials
 
+logger = get_logger()
 
 def register_subcommand(subparsers):
     parser = subparsers.add_parser("login", help="登录到 Elastic 服务")
@@ -10,5 +11,9 @@ def register_subcommand(subparsers):
 
 
 def run(args):
-    save_config(args.domain, args.token)
-    print("✅ 登录成功，配置已保存至 ~/.escli/config.json")
+    try:
+        DataHandler(args.domain, args.token)
+        save_credentials(args.domain, args.token)
+        logger.info("✅ login successful")
+    except ConnectionError as e:
+        logger.error(f"❌ login error: {e}")

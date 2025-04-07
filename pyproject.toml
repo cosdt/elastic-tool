@@ -7,5 +7,6 @@ requires = [
     "pyyaml",
     "scipy",
     "requests",
+    "keyring",
 ]
 build-backend = "setuptools.build_meta"

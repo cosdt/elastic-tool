@@ -2,17 +2,17 @@ from typing import List
 import os
 import requests
 import json
-import logging
+import urllib3
 
 from escli_tool.data import common
-from escli_tool.utils import read_from_json
+from escli_tool.utils import read_from_json, get_logger, load_credentials
 
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+logger = get_logger()
 ES_CONFIG_ROOT = common.environment_variables['ES_CONFIG_ROOT']()
-
-logger = logging.getLogger()
-
-
 class DataHandler():
     def __init__(self, domain: str, authorization: str):
         self.headers = {
@@ -33,7 +33,7 @@ class DataHandler():
         self._index_name = value
 
     def _validate_connection(self):
-        """尝试请求 _cluster/health 接口判断连接是否成功。"""
+        """request to _cluster/health"""
         try:
             resp = requests.get(
                 f"{self.domain}/_cluster/health",
@@ -42,12 +42,12 @@ class DataHandler():
                 timeout=5,
             )
             if resp.status_code == 200:
-                logger.info("✅ 成功连接到 Elasticsearch 实例")
+                logger.info("✅ connect successful")
             else:
-                logger.warning(f"⚠️ 无法验证登录状态: {resp.status_code}, {resp.text}")
+                logger.warning(f"⚠️ cannot verify login status: {resp.status_code}, {resp.text}")
         except Exception as e:
-            logger.error(f"❌ 登录验证失败: {e}")
-            raise ConnectionError(f"无法连接到 {self.domain}，请检查配置或重新 login")
+            logger.error(f"❌ invalid domain or token: {e}")
+            raise ConnectionError(f"cannot connect to {self.domain}, please checkout and relogin")
 
     @classmethod
     def from_config(cls, config_path: str=ES_CONFIG_ROOT):

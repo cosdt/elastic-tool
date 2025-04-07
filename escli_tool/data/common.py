@@ -1,13 +1,12 @@
 import os
 from typing import Callable, Any, TYPE_CHECKING
 
-VLLM_SCHEMA = ['vllm_benchmark_serving', 'vllm_benchmark_latency', 'vllm_benchmark_throughput']
+VLLM_SCHEMA = {'vllm_benchmark_serving', 'vllm_benchmark_latency', 'vllm_benchmark_throughput'}
 
 
 if TYPE_CHECKING:
     ES_CACHE_ROOT: str = os.path.expanduser("~/.cache/escli")
     ES_CONFIG_ROOT: str = os.path.expanduser("~/.config/escli")
-    VLLM_SCHEMA: set = {'vllm_benchmark_serving', 'vllm_benchmark_latency', 'vllm_benchmark_throughput'}
 
 
 def get_default_config_root():
