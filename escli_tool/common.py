@@ -2,9 +2,9 @@ import os
 from typing import TYPE_CHECKING, Any, Callable
 
 VLLM_SCHEMA = {
-    "vllm_benchmark_serving",
-    "vllm_benchmark_latency",
-    "vllm_benchmark_throughput",
+    "serving": "vllm_benchmark_serving",
+    "latency": "vllm_benchmark_latency",
+    "throughput":"vllm_benchmark_throughput",
 }
 
 

@@ -9,8 +9,8 @@ logger = get_logger()
 CLASS_REGISTRY = {}
 
 def register_class(cls):
-    if hasattr(cls, 'cls_name'):
-        CLASS_REGISTRY[cls.cls_name] = cls
+    if hasattr(cls, 'CLS_BRIEF_NAME'):
+        CLASS_REGISTRY[cls.CLS_BRIEF_NAME] = cls
     else:
         CLASS_REGISTRY[cls.__name__] = cls
     logger.info(f'Registering class: {cls.__name__}')
