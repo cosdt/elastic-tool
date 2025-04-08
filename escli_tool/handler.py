@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from typing import List
 
 import requests
@@ -34,7 +35,7 @@ class DataHandler:
         self._index_name = value
 
     def _validate_connection(self):
-        """request to _cluster/health"""
+        """Verify the availability of a given domain and token"""
         try:
             resp = requests.get(
                 f"{self.domain}/_cluster/health",
@@ -55,8 +56,13 @@ class DataHandler:
             )
 
     @classmethod
-    def from_config(cls, config_path: str = ES_CONFIG_ROOT):
-        config = read_from_json(config_path)
+    def maybe_from_env_or_keyring(cls):
+        domain = os.getenv('ES_OM_DOMAIN')
+        token = os.getenv('ES_OM_AUTHORIZATION')
+        if domain and token:
+            return cls(domain, token)
+        domain, token = load_credentials()
+        return cls(domain, token)
 
     def create_table_with_property_type(self, property_type: dict):
         try:

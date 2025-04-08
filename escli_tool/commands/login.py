@@ -5,13 +5,13 @@ logger = get_logger()
 
 
 def register_subcommand(subparsers):
-    parser = subparsers.add_parser("login", help="登录到 Elastic 服务")
+    parser = subparsers.add_parser("login", help="login to Elastic serve")
     parser.add_argument(
         "--domain",
         required=True,
-        help="Elasticsearch 域名（例如 http://localhost:9200）",
+        help="Elasticsearch domain(eg: http://localhost:9200)",
     )
-    parser.add_argument("--token", required=True, help="用于 Authorization 的 Token")
+    parser.add_argument("--token", required=True, help="Authorization Token")
     parser.set_defaults(func=run)
 
 

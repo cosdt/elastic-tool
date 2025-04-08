@@ -9,7 +9,26 @@ from pathlib import Path
 from sys import flags
 from typing import Dict, List, Union
 
-cli_parser = ArgumentParser()
+from escli_tool.registry import register_class
+from escli_tool.data.processor_base import ProcessorBase
+
+
+@register_class
+class BenchmarkProcessor(ProcessorBase):
+    def __init__(self):
+        super().__init__()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @dataclass
@@ -40,6 +59,8 @@ class ServingDataEntry(BaseDataEntry):
     median_itl_ms: float
     p99_itl_ms: float
     request_rate: str
+    request_throughput: float
+    total_token_throughput: float
 
 
 # Throughput

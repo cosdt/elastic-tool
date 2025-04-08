@@ -1,4 +1,5 @@
 # escli_tool/commands/create.py
+from email.policy import default
 import json
 import os
 
@@ -6,15 +7,16 @@ from escli_tool.handler import DataHandler
 
 
 def register_subcommand(subparsers):
-    parser = subparsers.add_parser("add", help="创建索引或插入文档")
-    parser.add_argument("--index", required=True, help="索引名称")
-    parser.add_argument("--file_name", help="创建索引的字段映射(json 字符串或文件)")
-    # parser.add_argument("--all", action="store_true", help="是否选择结果路径中的全部文件")
+    parser = subparsers.add_parser("add", help="Insert a new _id in the given index")
+    # parser.add_argument("--index", required=True, help="Index name")
+    parser.add_argument("--tag", default=None, help="Which version to save")
+    parser.add_argument("--res_dir", help="Result dir which include json files")
+    parser.add_argument("--processor", help="Processor selected to process json files")
     parser.set_defaults(func=run)
 
 
 def run(args):
-    handler = DataHandler()
+    handler = DataHandler.maybe_from_env_or_keyring()
     handler.index_name = args.index
 
     if args.mapping:
