@@ -1,6 +1,5 @@
 # registry.py
 # Register a processor to process json files
-from ast import main
 from escli_tool.utils import get_logger
 
 
@@ -10,18 +9,20 @@ logger = get_logger()
 CLASS_REGISTRY = {}
 
 def register_class(cls):
-    CLASS_REGISTRY[cls.__name__] = cls
+    if hasattr(cls, 'cls_name'):
+        CLASS_REGISTRY[cls.cls_name] = cls
+    else:
+        CLASS_REGISTRY[cls.__name__] = cls
+    logger.info(f'Registering class: {cls.__name__}')
     return cls
 
 def get_class(name):
     if name in CLASS_REGISTRY:
-        return CLASS_REGISTRY.get(name)
+        cls = CLASS_REGISTRY.get(name)
+        logger.info(f'found registered processor: {cls.__name__}')
+        return cls
     logger.warning(f"class: {name} is not registered in the list: {set(CLASS_REGISTRY)}")
     return CLASS_REGISTRY.get(name)
 
 def list_registered_classes():
     return list(CLASS_REGISTRY.keys())
-
-
-if __name__ == '__main__':
-    get_class('sad')

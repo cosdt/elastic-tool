@@ -3,6 +3,9 @@
 import argparse
 
 from escli_tool.commands import create, delete, login, search, update, add
+from escli_tool.utils import get_logger
+
+logger = get_logger()
 
 
 def main():

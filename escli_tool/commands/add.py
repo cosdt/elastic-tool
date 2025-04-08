@@ -4,6 +4,7 @@ import json
 import os
 
 from escli_tool.handler import DataHandler
+from escli_tool.registry import  get_class
 
 
 def register_subcommand(subparsers):
@@ -12,10 +13,16 @@ def register_subcommand(subparsers):
     parser.add_argument("--tag", default=None, help="Which version to save")
     parser.add_argument("--res_dir", help="Result dir which include json files")
     parser.add_argument("--processor", help="Processor selected to process json files")
+    parser.add_argument("--commit_id", help="Commit hash")
+    parser.add_argument("--commit_title", help="Commit massage")
+    parser.add_argument("--created_at", help="What time current commit is submitted")
     parser.set_defaults(func=run)
 
 
 def run(args):
+    if args.processor:
+        processor = get_class(args.processor)()
+
     handler = DataHandler.maybe_from_env_or_keyring()
     handler.index_name = args.index
 
