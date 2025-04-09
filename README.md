@@ -25,10 +25,10 @@ escli --help
 ### Add domain and token
 A domain and token is necessary to interact with es, you can follow the next step to ensure elastic is accessible.
 There are currently two ways to add
-- Environment variables
+- Environment variables:
 set `ES_OM_DOMAIN` and `ES_OM_AUTHORIZATION` to have a login
 
-- Keyring
+- Keyring:
  Login through the command line, we will automatically store it in the operating system's keyring, In comparison, this method is safer and protects the secrets from being leaked.
  The login command looks like:
 ```
