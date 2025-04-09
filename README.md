@@ -29,7 +29,11 @@ There are currently two ways to add
 set `ES_OM_DOMAIN` and `ES_OM_AUTHORIZATION` to have a login
 
 - Keyring
-Log in through the command line, we will automatically store it in the operating system's keyring, In comparison, this method is safer and protects the secrets from being leaked.
+ Login through the command line, we will automatically store it in the operating system's keyring, In comparison, this method is safer and protects the secrets from being leaked.
+ The login command looks like:
+```
+escli login --domain "your domain" --token "your token"
+```
 
 
 ## Features
