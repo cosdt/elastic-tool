@@ -1,10 +1,15 @@
 import os
 from typing import TYPE_CHECKING, Any, Callable
+from escli_tool.data.vllm_entry import (
+    ServingDataEntry,
+    LatencyDataEntry,
+    ThroughputDataEntry,
+)
 
 VLLM_SCHEMA = {
-    "serving": "vllm_benchmark_serving",
-    "latency": "vllm_benchmark_latency",
-    "throughput":"vllm_benchmark_throughput",
+    "serving": ("vllm_benchmark_serving", ServingDataEntry),
+    "latency": ("vllm_benchmark_latency", LatencyDataEntry),
+    "throughput": ("vllm_benchmark_throughput", ThroughputDataEntry),
 }
 
 
