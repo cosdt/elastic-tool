@@ -1,19 +1,16 @@
 import json
 import os
-import re
 from typing import List
 
 import requests
 import urllib3
 
-from escli_tool import common
-from escli_tool.utils import get_logger, load_credentials, read_from_json
+from escli_tool.utils import get_logger, load_credentials
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 logger = get_logger()
-ES_CONFIG_ROOT = common.environment_variables["ES_CONFIG_ROOT"]()
 
 
 class DataHandler:
@@ -232,7 +229,6 @@ class DataHandler:
             all_record = []
             for ele in data_list:
                 source_data = ele["_source"]
-                # value_list = [ele["_id"]]  # 不要id了
                 value_list = [ele["_id"]] if create_show else []
                 for key in field_names:
                     if self.display_fields and key not in self.display_fields:
