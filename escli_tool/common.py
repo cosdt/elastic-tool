@@ -14,6 +14,8 @@ VLLM_SCHEMA = {
 
 VLLM_SCHEMA_TEST = {
     'serving': ('vllm_benchmark_serving_test1', ServingDataEntry),
+    "latency": ("vllm_benchmark_latency_test1", LatencyDataEntry),
+    "throughput": ("vllm_benchmark_throughput_test1", ThroughputDataEntry),
 }
 
 if TYPE_CHECKING:

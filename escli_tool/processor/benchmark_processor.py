@@ -9,14 +9,14 @@ from escli_tool.registry import register_class
 from escli_tool.processor.processor_base import ProcessorBase
 from escli_tool.common import VLLM_SCHEMA, VLLM_SCHEMA_TEST
 from escli_tool.utils import get_logger
-from escli_tool.data.vllm_entry import BaseDataEntry, ServingDataEntry
+from escli_tool.data.vllm_entry import BaseDataEntry
 
 logger = get_logger()
 
 
 @register_class
 class BenchmarkProcessor(ProcessorBase):
-    CLS_BRIEF__NAME = 'benchmark'
+    CLS_BRIEF_NAME = 'benchmark'
     def __init__(self, 
                  commit_id: str, 
                  commit_title: str, 
