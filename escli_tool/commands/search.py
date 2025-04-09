@@ -1,9 +1,13 @@
 # escli_tool/commands/create.py
+import json
+
 from argparse import _SubParsersAction
 from email.policy import default
 
 from escli_tool.handler import DataHandler
 from escli_tool.utils import get_logger
+from escli_tool.registry import get_class
+from escli_tool.common import VLLM_SCHEMA, VLLM_SCHEMA_TEST
 
 
 logger = get_logger()
@@ -24,5 +28,22 @@ def run(args):
     if args.tag:
         index_name = f"{index_name}_{args.tag}"
     res = handler.search_data_from_vllm(index_name, source=args.source, size=args.size)
-    print(res)
+    print_formatted_results(res)
     return res
+
+def print_formatted_results(res):
+    """Format and print the search results"""
+    if not res or 'hits' not in res or 'hits' not in res['hits']:
+        print("No results found.")
+        return
+    print(f"Search took: {res['took']}ms")
+    print(f"Total hits: {res['hits']['total']['value']}")
+    print("-" * 50)
+
+    for hit in res['hits']['hits']:
+        print(f"Index: {hit['_index']}")
+        print(f"ID: {hit['_id']}")
+        if '_source' in hit:
+            print("Source:")
+            print(json.dumps(hit['_source'], indent=4))
+        print("-" * 50)

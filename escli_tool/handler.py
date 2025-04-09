@@ -428,8 +428,6 @@ class DataHandler:
     def _put_bulk(self, bulk_json):
         if not bulk_json or bulk_json == "":
             return
-
-        # logger.info(f"start insert data:\n{bulk_json.strip()}")
         try:
             resp = requests.post(
                 self.domain + "/_bulk",
