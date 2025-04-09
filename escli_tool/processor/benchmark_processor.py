@@ -137,18 +137,3 @@ class BenchmarkProcessor(ProcessorBase):
         _id = '_'.join(filter(None, _id_parts))
         return _id
     
-    
-    def test(self):
-        """
-        Test the processor by sending data to Elasticsearch.
-        """
-        for index_name, entries in self.data_instance.items():
-            for entry in entries:
-                _id = self.get_id(index_name, entry)
-                print(f"Index: {index_name}, ID: {_id}")
-
-if __name__ == '__main__':
-    processor = BenchmarkProcessor(commit_id='sada', commit_title='sadaad', model_name='llama2')
-    processor.send_to_es('/Users/wangli/elastic-tool/res')
-    
-
