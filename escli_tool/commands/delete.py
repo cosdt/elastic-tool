@@ -1,11 +1,12 @@
 # escli_tool/commands/create.py
 from email.policy import default
-import json
-import os
 
+from escli_tool.utils import get_logger
 from escli_tool.handler import DataHandler
 from escli_tool.registry import  get_class
 
+
+logger = get_logger()
 
 def register_subcommand(subparsers):
     parser = subparsers.add_parser("delete", help="Delete a existed _id in the given index")
@@ -16,9 +17,15 @@ def register_subcommand(subparsers):
 
 
 def run(args):
+    """Delete a document from the given index and _id list. if no _id is provided, delete the index."""
     handler = DataHandler.maybe_from_env_or_keyring()
-    handler.index_name = args.index
+    index_name = args.index
+    if args.tag:
+        index_name = f"{index_name}_{args.tag}"
+    handler.index_name = index_name
     id_to_delete = args.id
     if not id_to_delete:
-        raise ValueError("Please provide at least one ID to delete.")
-    handler.delete_id_list_with_bulk_insert(id_to_delete)
+        logger.info("No IDs provided for deletion. Deleting the index.")
+        handler.delete_index(args.index)
+    else:
+        handler.delete_id_list_with_bulk_insert(id_to_delete)

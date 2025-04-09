@@ -22,9 +22,13 @@ class BenchmarkProcessor(ProcessorBase):
                  commit_title: str, 
                  created_at: str=None,
                  model_name: str=None,
+                 tag: str=None,
                  ):
         super().__init__(commit_id, commit_title, created_at, model_name)
         self.schema: dict = VLLM_SCHEMA_TEST
+        # Tag the schema for version control
+        if tag:
+            self.tag_schema(tag)
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}
     @staticmethod
     def _read_from_json(folder_path: Union[str, Path]):
@@ -44,6 +48,14 @@ class BenchmarkProcessor(ProcessorBase):
     @classmethod
     def from_local_dir(cls, dir_path: str):
         res_map = cls._read_from_json(dir_path)
+    
+    def tag_schema(self, tag: str):
+        """
+        Tag the schema with the given tag.
+        """
+        if tag:
+            for key in self.schema.keys():
+                self.schema[key] = (f"{self.schema[key][0]}_{tag}", self.schema[key][1])
     
     @staticmethod
     def extract_tp_value(s: str) -> int:

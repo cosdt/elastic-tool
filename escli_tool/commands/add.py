@@ -15,28 +15,19 @@ def register_subcommand(subparsers):
     parser.add_argument("--processor", help="Processor selected to process json files")
     parser.add_argument("--commit_id", help="Commit hash")
     parser.add_argument("--commit_title", help="Commit massage")
+    parser.add_argument("--model_name", help="Model test on")
     parser.add_argument("--created_at", help="What time current commit is submitted")
     parser.set_defaults(func=run)
 
 
 def run(args):
     if args.processor:
-        processor = get_class(args.processor)()
-
-    handler = DataHandler.maybe_from_env_or_keyring()
-    handler.index_name = args.index
-
-    if args.mapping:
-        mapping = _load_json(args.mapping)
-        handler.add_single_data(mapping)
-
-    if args.doc:
-        doc = _load_json(args.doc)
-        handler.insert_document(doc)
-
-
-def _load_json(content):
-    if os.path.exists(content):
-        with open(content) as f:
-            return json.load(f)
-    return json.loads(content)
+        processor = get_class(args.processor)(
+            args.commit_id,
+            args.commit_title,
+            args.created_at,
+            args.model_name,
+            args.tag,
+        )
+        processor.send_to_es(
+            args.res_dir,)
