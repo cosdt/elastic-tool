@@ -1,13 +1,8 @@
 # escli_tool/commands/create.py
-import json
-
 from argparse import _SubParsersAction
-from email.policy import default
 
 from escli_tool.handler import DataHandler
 from escli_tool.utils import get_logger
-from escli_tool.registry import get_class
-from escli_tool.common import VLLM_SCHEMA, VLLM_SCHEMA_TEST
 
 
 logger = get_logger()

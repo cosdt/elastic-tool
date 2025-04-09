@@ -46,3 +46,5 @@ Perform search queries (DSL or keyword-based)
 Support both inline JSON and file-based input
 
 Environment config via ES_OM_DOMAIN and ES_OM_AUTHORIZATION env vars
+
+Check and filter _doc not existed in es
