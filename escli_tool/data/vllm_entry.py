@@ -18,8 +18,7 @@ class ServingDataEntry(BaseDataEntry):
     request_rate: str
     request_throughput: float
     total_token_throughput: float
-
-
+    
 # Throughput
 @dataclass
 class ThroughputDataEntry(BaseDataEntry):

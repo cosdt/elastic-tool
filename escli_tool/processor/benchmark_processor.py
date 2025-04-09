@@ -2,24 +2,14 @@ import json
 import os
 import re
 import sys
-from argparse import ArgumentParser
-from calendar import c
-from dataclasses import asdict, dataclass
-from datetime import datetime
 from pathlib import Path
-from sys import flags
 from typing import Dict, List, Union
 
 from escli_tool.registry import register_class
 from escli_tool.processor.processor_base import ProcessorBase
-from escli_tool.common import VLLM_SCHEMA
+from escli_tool.common import VLLM_SCHEMA, VLLM_SCHEMA_TEST
 from escli_tool.utils import get_logger
-from escli_tool.data.vllm_entry import (
-    ServingDataEntry,
-    LatencyDataEntry,
-    ThroughputDataEntry,
-    BaseDataEntry,
-)
+from escli_tool.data.vllm_entry import BaseDataEntry, ServingDataEntry
 
 logger = get_logger()
 
@@ -27,11 +17,15 @@ logger = get_logger()
 @register_class
 class BenchmarkProcessor(ProcessorBase):
     CLS_BRIEF__NAME = 'benchmark'
-    def __init__(self, commit_id: str, commit_title: str, created_at: str=None):
-        super().__init__(commit_id, commit_title, created_at)
-        self.schema: dict = VLLM_SCHEMA
+    def __init__(self, 
+                 commit_id: str, 
+                 commit_title: str, 
+                 created_at: str=None,
+                 model_name: str=None,
+                 ):
+        super().__init__(commit_id, commit_title, created_at, model_name)
+        self.schema: dict = VLLM_SCHEMA_TEST
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}
-    
     @staticmethod
     def _read_from_json(folder_path: Union[str, Path]):
         res_map = {}
@@ -64,6 +58,7 @@ class BenchmarkProcessor(ProcessorBase):
         commit_id = self.commit_id
         commit_title = self.commit_title
         json_data = self._read_from_json(folder_path)
+        # Instanceiate the data class dynamically from the schema
         for test_name, data in json_data.items():
             test_prefix = str.split(test_name, "_")[0]
             tp = self.extract_tp_value(test_name)
@@ -81,95 +76,67 @@ class BenchmarkProcessor(ProcessorBase):
                 test_name=test_name,
                 tp=tp,
                 created_at=self.created_at,
+                model_name=self.model_name,
                 **{key: value for key, value in data.items() if key in data_class.__annotations__.keys()},
                 )
             )
 
+    def to_dict(self):
+        """
+        Convert the processed data to a dictionary format.
+        """
+        result = {}
+        for index_name, entries in self.data_instance.items():
+            result[index_name] = [entry.to_dict() for entry in entries]
+        return result
+    
+    def send_to_es(self, folder_path: str):
+        """
+        Send the processed data to Elasticsearch.
+        """
+        self.process(folder_path)
+        for index_name, entries in self.data_instance.items():
+            for entry in entries:
+                _id = self.makeup_id(entry)
+                self.handler.index_name = index_name
+                self.handler.add_single_data(id=_id, data=entry.to_dict())
+    
     @staticmethod
-    def get_project_root() -> Path:
-        current_path = Path(__file__).resolve()
-        while current_path != current_path.parent:
-            if (current_path / ".git").exists() or (current_path / "setup.py").exists():
-                return current_path
-            current_path = current_path.parent
-        return current_path
-
-
+    def makeup_id(entry: BaseDataEntry) -> str:
+        """
+        Make up the unique _id interactive with es.
+        """
+        if not entry.commit_id:
+            raise ValueError("commit_id is required to generate _id")
+        if not entry.test_name:
+            raise ValueError("test_name is required to generate _id")
+        if not entry.tp:
+            raise ValueError("tp is required to generate _id")
+        
+        required_fields = ['commit_id', 'model_name']
+        for field in required_fields:
+            if not getattr(entry, field):
+                raise ValueError(f"{field} is required to generate _id")
+        _id_parts = [
+            entry.commit_id[:8],
+            str(entry.request_rate) if hasattr(entry, 'request_rate') else None,
+            entry.model_name,
+        ]
+        _id = '_'.join(filter(None, _id_parts))
+        return _id
+    
+    
+    def test(self):
+        """
+        Test the processor by sending data to Elasticsearch.
+        """
+        for index_name, entries in self.data_instance.items():
+            for entry in entries:
+                _id = self.get_id(index_name, entry)
+                print(f"Index: {index_name}, ID: {_id}")
 
 if __name__ == '__main__':
-    processor = BenchmarkProcessor(commit_id='sada', commit_title='sadaad')
-    processor.process('/Users/wangli/elastic-tool/res')
-    print(processor.data_instance)
+    processor = BenchmarkProcessor(commit_id='sada', commit_title='sadaad', model_name='llama2')
+    processor.send_to_es('/Users/wangli/elastic-tool/res')
+    
 
-# def data_prc(
-#     folder_path: Union[str, Path], commit_id, commit_title, created_at=None
-# ) -> Dict[str, List[Union[ServingDataEntry, LatencyDataEntry, ThroughputDataEntry]]]:
-#     commit_id = commit_id
-#     commit_title = commit_title
-#     json_data = read_from_json(folder_path)
-#     res_instance = {
-#         "vllm_benchmark_serving": [],
-#         "vllm_benchmark_latency": [],
-#         "vllm_benchmark_throughput": [],
-#     }
-#     for test_name, data in json_data.items():
-#         test_prefix = str.split(test_name, "_")[0]
-#         tp = extract_tp_value(test_name)
-#         match test_prefix:
-#             case "serving":
-#                 res_instance["vllm_benchmark_serving"].append(
-#                     ServingDataEntry(
-#                         commit_id=commit_id,
-#                         commit_title=commit_title,
-#                         test_name=test_name,
-#                         tp=tp,
-#                         created_at=created_at,
-#                         request_rate=data["request_rate"],
-#                         mean_ttft_ms=data["mean_ttft_ms"],
-#                         median_ttft_ms=data["median_ttft_ms"],
-#                         p99_ttft_ms=data["p99_ttft_ms"],
-#                         mean_itl_ms=data["mean_itl_ms"],
-#                         median_itl_ms=data["median_itl_ms"],
-#                         p99_itl_ms=data["p99_itl_ms"],
-#                         mean_tpot_ms=data["mean_tpot_ms"],
-#                         median_tpot_ms=data["median_tpot_ms"],
-#                         p99_tpot_ms=data["p99_tpot_ms"],
-#                     )
-#                 )
-#             case "latency":
-#                 res_instance["vllm_benchmark_latency"].append(
-#                     LatencyDataEntry(
-#                         commit_id=commit_id,
-#                         commit_title=commit_title,
-#                         test_name=test_name,
-#                         tp=tp,
-#                         created_at=created_at,
-#                         mean_latency=convert_s_ms(data["avg_latency"]),
-#                         median_latency=convert_s_ms(data["percentiles"]["50"]),
-#                         percentile_99=convert_s_ms(data["percentiles"]["99"]),
-#                     )
-#                 )
-#             case "throughput":
-#                 res_instance["vllm_benchmark_throughput"].append(
-#                     ThroughputDataEntry(
-#                         commit_id=commit_id,
-#                         commit_title=commit_title,
-#                         test_name=test_name,
-#                         created_at=created_at,
-#                         tp=tp,
-#                         requests_per_second=data["requests_per_second"],
-#                         tokens_per_second=data["tokens_per_second"],
-#                     )
-#                 )
-
-#     return res_instance
-
-
-def get_all_commit(file_path):
-    res = {}
-    with open(file_path, "r") as f:
-        for line in f:
-            commit = line.strip().split(" ", 1)
-            commit_id, commit_title = commit[0], commit[1]
-            res[commit_id] = commit_title
-    return res

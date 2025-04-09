@@ -12,6 +12,9 @@ VLLM_SCHEMA = {
     "throughput": ("vllm_benchmark_throughput", ThroughputDataEntry),
 }
 
+VLLM_SCHEMA_TEST = {
+    'serving': ('vllm_benchmark_serving_test1', ServingDataEntry),
+}
 
 if TYPE_CHECKING:
     ES_CACHE_ROOT: str = os.path.expanduser("~/.cache/escli")

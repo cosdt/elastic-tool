@@ -10,6 +10,7 @@ class BaseDataEntry:
     test_name: str
     tp: int
     created_at: Union[str, None]
+    model_name: str
 
     def __post_init__(self):
         if not self.created_at:

@@ -17,6 +17,7 @@ def main():
     search.register_subcommand(subparsers)
     login.register_subcommand(subparsers)
     add.register_subcommand(subparsers)
+    delete.register_subcommand(subparsers)
 
     args = parser.parse_args()
 
