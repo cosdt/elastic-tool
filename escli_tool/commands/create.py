@@ -2,7 +2,7 @@
 
 
 def register_subcommand(subparsers):
-    parser = subparsers.add_parser("create", help="Create a new index")
+    pass
 
 
 def run(args):

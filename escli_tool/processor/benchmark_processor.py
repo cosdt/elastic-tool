@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Union
 
-from escli_tool.common import VLLM_SCHEMA, VLLM_SCHEMA_TEST
+from escli_tool.common import VLLM_SCHEMA
 from escli_tool.data.vllm_entry import BaseDataEntry
 from escli_tool.processor.processor_base import ProcessorBase
 from escli_tool.registry import register_class
@@ -27,7 +27,7 @@ class BenchmarkProcessor(ProcessorBase):
         tag: str = None,
     ):
         super().__init__(commit_id, commit_title, created_at, model_name)
-        self.schema: dict = VLLM_SCHEMA_TEST
+        self.schema: dict = VLLM_SCHEMA
         # Tag the schema for version control
         if tag:
             self.tag_schema(tag)
@@ -44,13 +44,9 @@ class BenchmarkProcessor(ProcessorBase):
                     json_data = json.load(f)
                     res_map[Path(file_name).stem] = json_data
             except json.JSONDecodeError as e:
-                logger.error(f"can not read from json: {file_name}")
+                logger.error(f"can not read from json: {file_name}, error: {e}")
                 sys.exit(1)
         return res_map
-
-    @classmethod
-    def from_local_dir(cls, dir_path: str):
-        res_map = cls._read_from_json(dir_path)
 
     def tag_schema(self, tag: str):
         """

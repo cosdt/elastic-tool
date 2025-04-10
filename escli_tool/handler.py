@@ -194,7 +194,7 @@ class DataHandler:
     def _qr_remove_create(self, source_list: list, create_show):
         try:
             source_list.remove(self.create_at)
-        except:
+        except ValueError:
             pass
         if create_show:
             source_list += [self.create_at]
@@ -223,7 +223,7 @@ class DataHandler:
                 try:
                     idx = field_names.index(ele)
                     res.append(idx)
-                except:
+                except ValueError:
                     pass
             return lambda x: tuple(x[i] for i in res)
         except Exception as e:
@@ -366,7 +366,7 @@ class DataHandler:
         try:
             resp = requests.post(url, headers=header, json=query, verify=False)
             resp.raise_for_status()
-            logger.info(f"search  successful")
+            logger.info("search  successful")
             return resp.json()
         except requests.exceptions.RequestException as req_err:
             logger.error(f"Request error during search: {req_err}",

@@ -1,8 +1,5 @@
 # escli_tool/commands/create.py
-from email.policy import default
-
 from escli_tool.handler import DataHandler
-from escli_tool.registry import get_class
 from escli_tool.utils import get_logger
 
 logger = get_logger()

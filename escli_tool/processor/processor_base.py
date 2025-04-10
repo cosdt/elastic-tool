@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from escli_tool.handler import DataHandler
 
@@ -16,11 +16,3 @@ class ProcessorBase(ABC):
     def fetch_from_es(self, index_name: str, size: int, source: bool = True):
         full_data = self.handler.search_data_from_vllm(index_name)
         return full_data
-
-    # @abstractmethod
-    # def send_to_es():
-    #     raise NotImplementedError("Subclasses should implement this method")
-
-    # @abstractmethod
-    # def fetch_from_es():
-    #     raise NotImplementedError("Subclasses should implement this method")

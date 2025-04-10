@@ -1,8 +1,6 @@
 # escli_tool/commands/create.py
 from argparse import _SubParsersAction
 
-from escli_tool.handler import DataHandler
-
 
 def register_subcommand(subparsers: _SubParsersAction):
     parser = subparsers.add_parser(

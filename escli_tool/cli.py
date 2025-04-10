@@ -2,8 +2,7 @@
 
 import argparse
 
-from escli_tool.commands import (add, check, create, delete, login, search,
-                                 update)
+from escli_tool.commands import (add, check, create, delete, login, search)
 from escli_tool.utils import get_logger
 
 logger = get_logger()

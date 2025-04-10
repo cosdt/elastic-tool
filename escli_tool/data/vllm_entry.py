@@ -1,7 +1,5 @@
 from dataclasses import dataclass, field
 
-from cycler import V
-
 from escli_tool.data.base import BaseDataEntry
 
 
