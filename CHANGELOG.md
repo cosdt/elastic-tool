@@ -21,5 +21,6 @@
 ## v0.1.1 
 
 ### bugfix
-- Fixed keyring no recommended backend was available bug
-- Fixed tag subfix, set main branch as default tag and exclude it
+- Fixed keyring no recommended backend was available bug.
+- Fixed tag subfix, set main branch as default tag and exclude it.
+- Fixed '/' bug, es field can not include it, remove it from model name.
