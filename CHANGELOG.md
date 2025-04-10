@@ -22,3 +22,4 @@
 
 ### bugfix
 - Fixed keyring no recommended backend was available bug
+- Fixed tag subfix, set main branch as default tag and exclude it
