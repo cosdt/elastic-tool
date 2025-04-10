@@ -80,9 +80,5 @@ setup(
     python_requires=">=3.9",
     install_requires=get_requirements(),
     extras_require={},
-    entry_points={
-        "console_scripts": [
-            "escli=escli_tool.cli:main"
-        ]
-    },
+    entry_points={"console_scripts": ["escli=escli_tool.cli:main"]},
 )

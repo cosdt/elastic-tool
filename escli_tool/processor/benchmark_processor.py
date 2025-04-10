@@ -5,11 +5,11 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Union
 
-from escli_tool.registry import register_class
-from escli_tool.processor.processor_base import ProcessorBase
 from escli_tool.common import VLLM_SCHEMA, VLLM_SCHEMA_TEST
-from escli_tool.utils import get_logger
 from escli_tool.data.vllm_entry import BaseDataEntry
+from escli_tool.processor.processor_base import ProcessorBase
+from escli_tool.registry import register_class
+from escli_tool.utils import get_logger
 
 logger = get_logger()
 
@@ -17,19 +17,22 @@ logger = get_logger()
 @register_class
 class BenchmarkProcessor(ProcessorBase):
     CLS_BRIEF_NAME = 'benchmark'
-    def __init__(self, 
-                 commit_id: str, 
-                 commit_title: str, 
-                 created_at: str=None,
-                 model_name: str=None,
-                 tag: str=None,
-                 ):
+
+    def __init__(
+        self,
+        commit_id: str,
+        commit_title: str,
+        created_at: str = None,
+        model_name: str = None,
+        tag: str = None,
+    ):
         super().__init__(commit_id, commit_title, created_at, model_name)
         self.schema: dict = VLLM_SCHEMA_TEST
         # Tag the schema for version control
         if tag:
             self.tag_schema(tag)
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}
+
     @staticmethod
     def _read_from_json(folder_path: Union[str, Path]):
         res_map = {}
@@ -48,15 +51,16 @@ class BenchmarkProcessor(ProcessorBase):
     @classmethod
     def from_local_dir(cls, dir_path: str):
         res_map = cls._read_from_json(dir_path)
-    
+
     def tag_schema(self, tag: str):
         """
         Tag the schema with the given tag.
         """
         if tag:
             for key in self.schema.keys():
-                self.schema[key] = (f"{self.schema[key][0]}_{tag}", self.schema[key][1])
-    
+                self.schema[key] = (f"{self.schema[key][0]}_{tag}",
+                                    self.schema[key][1])
+
     @staticmethod
     def extract_tp_value(s: str) -> int:
         match = re.search(r"tp(\d+)", s)
@@ -83,15 +87,18 @@ class BenchmarkProcessor(ProcessorBase):
                 self.data_instance[index_name] = []
             self.data_instance[index_name].append(
                 data_class(
-                commit_id=commit_id,
-                commit_title=commit_title,
-                test_name=test_name,
-                tp=tp,
-                created_at=self.created_at,
-                model_name=self.model_name,
-                **{key: value for key, value in data.items() if key in data_class.__annotations__.keys()},
-                )
-            )
+                    commit_id=commit_id,
+                    commit_title=commit_title,
+                    test_name=test_name,
+                    tp=tp,
+                    created_at=self.created_at,
+                    model_name=self.model_name,
+                    **{
+                        key: value
+                        for key, value in data.items()
+                        if key in data_class.__annotations__.keys()
+                    },
+                ))
 
     def to_dict(self):
         """
@@ -101,7 +108,7 @@ class BenchmarkProcessor(ProcessorBase):
         for index_name, entries in self.data_instance.items():
             result[index_name] = [entry.to_dict() for entry in entries]
         return result
-    
+
     def send_to_es(self, folder_path: str):
         """
         Send the processed data to Elasticsearch.
@@ -112,7 +119,7 @@ class BenchmarkProcessor(ProcessorBase):
                 _id = self.makeup_id(entry)
                 self.handler.index_name = index_name
                 self.handler.add_single_data(id=_id, data=entry.to_dict())
-    
+
     @staticmethod
     def makeup_id(entry: BaseDataEntry) -> str:
         """
@@ -124,16 +131,16 @@ class BenchmarkProcessor(ProcessorBase):
             raise ValueError("test_name is required to generate _id")
         if not entry.tp:
             raise ValueError("tp is required to generate _id")
-        
+
         required_fields = ['commit_id', 'model_name']
         for field in required_fields:
             if not getattr(entry, field):
                 raise ValueError(f"{field} is required to generate _id")
         _id_parts = [
             entry.commit_id[:8],
-            str(entry.request_rate) if hasattr(entry, 'request_rate') else None,
+            str(entry.request_rate)
+            if hasattr(entry, 'request_rate') else None,
             entry.model_name,
         ]
         _id = '_'.join(filter(None, _id_parts))
         return _id
-    

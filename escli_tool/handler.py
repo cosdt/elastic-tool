@@ -9,11 +9,11 @@ from escli_tool.utils import get_logger, load_credentials
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 logger = get_logger()
 
 
 class DataHandler:
+
     def __init__(self, domain: str, authorization: str):
         self.headers = {
             "Content-Type": "application/x-ndjson",
@@ -64,13 +64,19 @@ class DataHandler:
     def create_table_with_property_type(self, property_type: dict):
         try:
             data = {
-                "settings": {"number_of_shards": 1, "number_of_replicas": 1},
-                "mappings": {"properties": property_type},
+                "settings": {
+                    "number_of_shards": 1,
+                    "number_of_replicas": 1
+                },
+                "mappings": {
+                    "properties": property_type
+                },
             }
             url = f"{self.domain}/{self._index_name}"
-            resp = requests.put(
-                url=url, headers=self.headers, data=json.dumps(data), verify=False
-            )
+            resp = requests.put(url=url,
+                                headers=self.headers,
+                                data=json.dumps(data),
+                                verify=False)
             print(json.loads(resp.text))
         except Exception as e:
             logger.info(f"create table with property type error:\n{e}")
@@ -94,9 +100,10 @@ class DataHandler:
     def reindex(self, source_idx, dest_idx):
         data = {"source": {"index": source_idx}, "dest": {"index": dest_idx}}
         url = f"{self.domain}/{self._index_name}"
-        resp = requests.put(
-            url=url, headers=self.headers, data=json.dumps(data), verify=False
-        )
+        resp = requests.put(url=url,
+                            headers=self.headers,
+                            data=json.dumps(data),
+                            verify=False)
         print(json.loads(resp.text))
 
     def _format_query_items(self, query_items: dict):
@@ -112,7 +119,9 @@ class DataHandler:
     def _query_scroll_search(self, query_items=None, query_range=None):
         url = f"{self.domain}/{self._index_name}/_search?scroll=1m"
         data = {
-            "query": {"match_all": {}},
+            "query": {
+                "match_all": {}
+            },
             "size": 5000,
             # "sort": [
             #     {"Date": {"order": "desc"}},
@@ -133,10 +142,19 @@ class DataHandler:
                     "must": [
                         {
                             "match_phrase": {
-                                "file_project": {"query": "vllm-project/vllm"}
+                                "file_project": {
+                                    "query": "vllm-project/vllm"
+                                }
                             }
                         },
-                        {"range": {"Date": {"gte": "2024-12-01", "lte": "2025-01-01"}}},
+                        {
+                            "range": {
+                                "Date": {
+                                    "gte": "2024-12-01",
+                                    "lte": "2025-01-01"
+                                }
+                            }
+                        },
                     ]
                 }
             },
@@ -144,9 +162,10 @@ class DataHandler:
         }
 
         try:
-            resp = requests.get(
-                url=url, headers=self.headers, data=json.dumps(data), verify=False
-            )
+            resp = requests.get(url=url,
+                                headers=self.headers,
+                                data=json.dumps(data),
+                                verify=False)
             res_data = json.loads(resp.text)
             data_list = res_data["hits"]["hits"]
             scroll_id = res_data["_scroll_id"]
@@ -187,8 +206,7 @@ class DataHandler:
             res = self._qr_remove_create(field_names, create_show)
         else:
             self.display_fields = self._qr_remove_create(
-                self.display_fields, create_show
-            )
+                self.display_fields, create_show)
             # 根据self.display_fields剔除冗余项
             display_name: list = list()
             for name in field_names:
@@ -211,9 +229,11 @@ class DataHandler:
         except Exception as e:
             raise Exception(f"record order process error {e}")
 
-    def query_record(
-        self, query_items=None, query_range=None, log_table=True, create_show=False
-    ):
+    def query_record(self,
+                     query_items=None,
+                     query_range=None,
+                     log_table=True,
+                     create_show=False):
         if not query_items:
             query_items = dict()
 
@@ -225,7 +245,8 @@ class DataHandler:
 
             table = prettytable.PrettyTable()
             # table.field_names = self._qr_get_table_field(["ID"] + field_names, create_show)
-            table.field_names = self._qr_get_table_field(field_names, create_show)
+            table.field_names = self._qr_get_table_field(
+                field_names, create_show)
             all_record = []
             for ele in data_list:
                 source_data = ele["_source"]
@@ -241,9 +262,9 @@ class DataHandler:
 
             # 排个序好对比
             if self.field_order:
-                all_record = sorted(
-                    all_record, key=self._qr_get_record_order(list(table.field_names))
-                )
+                all_record = sorted(all_record,
+                                    key=self._qr_get_record_order(
+                                        list(table.field_names)))
             for ele in all_record:
                 table.add_row(ele)
 
@@ -253,19 +274,25 @@ class DataHandler:
         except Exception as e:
             raise Exception(e)
 
-    def search_data_from_vllm(
-        self, _index: str, source: bool = False, size: int = 1000
-    ):
+    def search_data_from_vllm(self,
+                              _index: str,
+                              source: bool = False,
+                              size: int = 1000):
         url = f"{self.domain}/{_index}/_search"
         data = {
             "_source": source,
             "size": 1000,
-            "query": {"match_all": {}},
+            "query": {
+                "match_all": {}
+            },
             #     "sort": [
             #     { "created_at": { "order": "desc" } }
             # ]
         }
-        resp = requests.post(url=url, headers=self.headers, json=data, verify=False)
+        resp = requests.post(url=url,
+                             headers=self.headers,
+                             json=data,
+                             verify=False)
         return resp.json()
 
     def get_field_value(self, index_name, fields: List[str]) -> List[dict]:
@@ -274,13 +301,12 @@ class DataHandler:
         res = []
         for hit in hits:
             source = hit["_source"]
-            res.append(
-                {
-                    "_index": index_name,
-                    "_id": hit["_id"],
-                    **{field: source.get(field, None) for field in fields},
-                }
-            )
+            res.append({
+                "_index": index_name,
+                "_id": hit["_id"],
+                **{field: source.get(field, None)
+                   for field in fields},
+            })
         return res
 
     def _format_data_for_bulk_insert(self, data_list):
@@ -295,7 +321,12 @@ class DataHandler:
         actions = ""
         for data in data_list:
             item = data[1]
-            index_data = {"index": {"_index": self._index_name, "_id": data[0]}}
+            index_data = {
+                "index": {
+                    "_index": self._index_name,
+                    "_id": data[0]
+                }
+            }
             actions += json.dumps(index_data) + "\n"
             actions += json.dumps(item) + "\n"
         return actions
@@ -305,7 +336,10 @@ class DataHandler:
         header = self.headers.copy()
         header["Content-Type"] = "application/json"
         try:
-            resp = requests.put(url=url, headers=header, json=data, verify=False)
+            resp = requests.put(url=url,
+                                headers=header,
+                                json=data,
+                                verify=False)
             resp.raise_for_status()
             logger.info(
                 f"add data to {self.index_name}/{id} successful, Response: {resp.json()}"
@@ -335,17 +369,17 @@ class DataHandler:
             logger.info(f"search  successful")
             return resp.json()
         except requests.exceptions.RequestException as req_err:
-            logger.error(f"Request error during search: {req_err}", exc_info=True)
+            logger.error(f"Request error during search: {req_err}",
+                         exc_info=True)
 
         except UnicodeEncodeError:
             logger.error(
-                "UnicodeEncodeError occurred while encoding data JSON", exc_info=True
-            )
+                "UnicodeEncodeError occurred while encoding data JSON",
+                exc_info=True)
 
         except Exception as other_err:
-            logger.error(
-                f"Unexpected error during single search: {other_err}", exc_info=True
-            )
+            logger.error(f"Unexpected error during single search: {other_err}",
+                         exc_info=True)
 
     def condition_query(self, index_name, conditions):
         """
@@ -360,11 +394,20 @@ class DataHandler:
 
         for field, condition in conditions.items():
             if isinstance(condition, dict):  # 处理 range 查询
-                query["query"]["bool"]["must"].append({"range": {field: condition}})
+                query["query"]["bool"]["must"].append(
+                    {"range": {
+                        field: condition
+                    }})
             elif isinstance(condition, list):  # 处理 terms 查询
-                query["query"]["bool"]["must"].append({"terms": {field: condition}})
+                query["query"]["bool"]["must"].append(
+                    {"terms": {
+                        field: condition
+                    }})
             else:  # 处理 match 查询（单个值）
-                query["query"]["bool"]["must"].append({"match": {field: condition}})
+                query["query"]["bool"]["must"].append(
+                    {"match": {
+                        field: condition
+                    }})
 
         url = f"{self.domain}/{index_name}/_search"
         header = self.headers.copy()
@@ -375,7 +418,10 @@ class DataHandler:
             "query": query,
         }  # 只获取 _id，最多 10000 条
         try:
-            resp = requests.post(url, headers=header, data=payload, verify=False)
+            resp = requests.post(url,
+                                 headers=header,
+                                 data=payload,
+                                 verify=False)
             resp.raise_for_status()
             hits = resp.json().get("hits", {}).get("hits", [])
             return [hit["_id"] for hit in hits]
@@ -398,17 +444,17 @@ class DataHandler:
             resp.raise_for_status()
             logger.info(f"update data {index_name}/{id} successful")
         except requests.exceptions.RequestException as req_err:
-            logger.error(f"Request error during update: {req_err}", exc_info=True)
+            logger.error(f"Request error during update: {req_err}",
+                         exc_info=True)
 
         except UnicodeEncodeError:
             logger.error(
-                "UnicodeEncodeError occurred while encoding data JSON", exc_info=True
-            )
+                "UnicodeEncodeError occurred while encoding data JSON",
+                exc_info=True)
 
         except Exception as other_err:
-            logger.error(
-                f"Unexpected error during single update: {other_err}", exc_info=True
-            )
+            logger.error(f"Unexpected error during single update: {other_err}",
+                         exc_info=True)
 
     def _bulk_insert(self, data_list: list):
         if not data_list:
@@ -421,7 +467,7 @@ class DataHandler:
             return
         else:
             for i in range(n + 1):
-                sub_list = data_list[i * interval : (i + 1) * interval]
+                sub_list = data_list[i * interval:(i + 1) * interval]
                 bulk_json = self._format_data_for_bulk_insert(sub_list)
                 self._put_bulk(bulk_json)
 
@@ -438,7 +484,9 @@ class DataHandler:
             logger.info(f"finish insert data:\n{resp.text}\n")
         except UnicodeEncodeError:
             bulk_json = bulk_json.encode("iso-8859-1", "ignore")
-            resp = requests.put(url=self.domain, data=bulk_json, headers=self.headers)
+            resp = requests.put(url=self.domain,
+                                data=bulk_json,
+                                headers=self.headers)
             logger.info(f"UnicodeEncode finish insert data:\n{resp.text}")
         except Exception as otherError:
             logger.info(f"Insert Exception:\n{otherError}")

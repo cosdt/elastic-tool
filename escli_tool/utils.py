@@ -14,9 +14,8 @@ def read_from_json(file_path: Union[str, Path]):
 
 
 def get_logger():
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s - %(levelname)s - %(message)s")
     logger = logging.getLogger()
     return logger
 

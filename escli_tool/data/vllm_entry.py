@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 
 from cycler import V
+
 from escli_tool.data.base import BaseDataEntry
 
 
@@ -18,7 +19,8 @@ class ServingDataEntry(BaseDataEntry):
     request_rate: str
     request_throughput: float
     total_token_throughput: float
-    
+
+
 # Throughput
 @dataclass
 class ThroughputDataEntry(BaseDataEntry):
@@ -38,7 +40,10 @@ class LatencyDataEntry(BaseDataEntry):
     def __post_init__(self):
         super().__post_init__()
         # Convert all latency values from seconds to milliseconds
-        self.percentiles = {k: convert_s_ms(v) for k, v in self.percentiles.items()}
+        self.percentiles = {
+            k: convert_s_ms(v)
+            for k, v in self.percentiles.items()
+        }
         self.avg_latency = convert_s_ms(self.avg_latency)
         self.mean_latency = self.avg_latency
         if not isinstance(self.percentiles, dict):
@@ -47,7 +52,6 @@ class LatencyDataEntry(BaseDataEntry):
             raise ValueError("percentiles must contain keys '50' and '99'")
         self.median_latency = self.percentiles["50"]
         self.percentile_99 = self.percentiles["99"]
-
 
 
 def convert_s_ms(time_second: float) -> float:

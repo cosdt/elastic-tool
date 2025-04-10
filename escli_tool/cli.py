@@ -2,14 +2,16 @@
 
 import argparse
 
-from escli_tool.commands import create, delete, login, search, update, add, check
+from escli_tool.commands import (add, check, create, delete, login, search,
+                                 update)
 from escli_tool.utils import get_logger
 
 logger = get_logger()
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="escli", description="Elastic CLI 工具")
+    parser = argparse.ArgumentParser(prog="escli",
+                                     description="Elastic CLI 工具")
     subparsers = parser.add_subparsers(dest="command")
 
     # register subcommand

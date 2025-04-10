@@ -4,16 +4,30 @@ from argparse import _SubParsersAction
 from escli_tool.handler import DataHandler
 from escli_tool.utils import get_logger
 
-
 logger = get_logger()
+
 
 def register_subcommand(subparsers: _SubParsersAction):
     parser = subparsers.add_parser("check", help="Check for an existed _id")
-    parser.add_argument("commit_file", nargs="?", default=None, help="Text file to filter the commit id")
-    parser.add_argument("--index", default='vllm_benchmark_throughput', help="The index name to search")
-    parser.add_argument("--source", action="store_true", default=True, help="Whether to expand details")
-    parser.add_argument("--size", required=False, default=1000, type=int, help="Size to search")
-    parser.add_argument("--tag", required=False, help="Which version to search")
+    parser.add_argument("commit_file",
+                        nargs="?",
+                        default=None,
+                        help="Text file to filter the commit id")
+    parser.add_argument("--index",
+                        default='vllm_benchmark_throughput',
+                        help="The index name to search")
+    parser.add_argument("--source",
+                        action="store_true",
+                        default=True,
+                        help="Whether to expand details")
+    parser.add_argument("--size",
+                        required=False,
+                        default=1000,
+                        type=int,
+                        help="Size to search")
+    parser.add_argument("--tag",
+                        required=False,
+                        help="Which version to search")
     parser.set_defaults(func=run)
 
 
@@ -23,7 +37,9 @@ def run(args):
     index_name = args.index
     if args.tag:
         index_name = f"{index_name}_{args.tag}"
-    records = handler.search_data_from_vllm(index_name, source=args.source, size=args.size)
+    records = handler.search_data_from_vllm(index_name,
+                                            source=args.source,
+                                            size=args.size)
     recorded_commits = set()
     cur_commits = set()
     for hit in records['hits']['hits']:
@@ -46,11 +62,15 @@ def run(args):
                 lines.append(line)
                 cur_commits.add(line.split()[0])
     remaining_commits = cur_commits - recorded_commits
-    filtered_lines = [line for line in lines if line.split()[0] in remaining_commits]
-    logger.info(f"Filtered {len(filtered_lines)} commits from {len(cur_commits)} commits")
+    filtered_lines = [
+        line for line in lines if line.split()[0] in remaining_commits
+    ]
+    logger.info(
+        f"Filtered {len(filtered_lines)} commits from {len(cur_commits)} commits"
+    )
     with open(args.commit_file, 'w') as f:
         for i, line in enumerate(filtered_lines):
-            print('-'*100)
+            print('-' * 100)
             print(line)
             if i == len(filtered_lines) - 1:
                 f.write(line)

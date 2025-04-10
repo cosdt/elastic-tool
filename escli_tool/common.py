@@ -1,10 +1,8 @@
 import os
 from typing import TYPE_CHECKING, Any, Callable
-from escli_tool.data.vllm_entry import (
-    ServingDataEntry,
-    LatencyDataEntry,
-    ThroughputDataEntry,
-)
+
+from escli_tool.data.vllm_entry import (LatencyDataEntry, ServingDataEntry,
+                                        ThroughputDataEntry)
 
 VLLM_SCHEMA = {
     "serving": ("vllm_benchmark_serving", ServingDataEntry),
@@ -31,9 +29,10 @@ def get_default_config_root():
 
 
 environment_variables: dict[str, Callable[[], Any]] = {
-    "ES_CONFIG_ROOT": lambda: os.path.expanduser(
-        os.getenv("ES_CONFIG_ROOT", os.path.join(get_default_config_root(), "escli"))
-    )
+    "ES_CONFIG_ROOT":
+    lambda: os.path.expanduser(
+        os.getenv("ES_CONFIG_ROOT",
+                  os.path.join(get_default_config_root(), "escli")))
 }
 
 

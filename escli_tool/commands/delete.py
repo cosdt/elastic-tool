@@ -1,18 +1,21 @@
 # escli_tool/commands/create.py
 from email.policy import default
 
-from escli_tool.utils import get_logger
 from escli_tool.handler import DataHandler
-from escli_tool.registry import  get_class
-
+from escli_tool.registry import get_class
+from escli_tool.utils import get_logger
 
 logger = get_logger()
 
+
 def register_subcommand(subparsers):
-    parser = subparsers.add_parser("delete", help="Delete a existed _id in the given index")
+    parser = subparsers.add_parser(
+        "delete", help="Delete a existed _id in the given index")
     parser.add_argument("--tag", default=None, help="Which version to save")
     parser.add_argument("--index", help="index name")
-    parser.add_argument("--id", help="IDs to delete (accepts multiple IDs)", nargs="+")
+    parser.add_argument("--id",
+                        help="IDs to delete (accepts multiple IDs)",
+                        nargs="+")
     parser.set_defaults(func=run)
 
 
