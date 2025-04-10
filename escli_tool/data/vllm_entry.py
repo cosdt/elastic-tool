@@ -17,13 +17,21 @@ class ServingDataEntry(BaseDataEntry):
     request_rate: str
     request_throughput: float
     total_token_throughput: float
+    model_id: str
+    model_name: str
 
+    def __post_init__(self):
+        # Serving results do not have field model_name, for backward compatibility
+        # we set model_id to model_name
+        super().__post_init__()
+        self.model_name = self.model_id
 
 # Throughput
 @dataclass
 class ThroughputDataEntry(BaseDataEntry):
     requests_per_second: float
     tokens_per_second: float
+    model_name: str
 
 
 # Latency
@@ -31,6 +39,7 @@ class ThroughputDataEntry(BaseDataEntry):
 class LatencyDataEntry(BaseDataEntry):
     avg_latency: float
     percentiles: dict[str, float]
+    model_name: str
     mean_latency: float = field(init=False)
     median_latency: float = field(init=False)
     percentile_99: float = field(init=False)

@@ -12,7 +12,6 @@ def register_subcommand(subparsers):
                         help="Processor selected to process json files")
     parser.add_argument("--commit_id", help="Commit hash")
     parser.add_argument("--commit_title", help="Commit massage")
-    parser.add_argument("--model_name", help="Model test on")
     parser.add_argument("--created_at",
                         help="What time current commit is submitted")
     parser.set_defaults(func=run)
@@ -38,7 +37,6 @@ def run(args):
         args.commit_id,
         args.commit_title,
         args.created_at,
-        args.model_name,
         args.tag,
     )
     processor.send_to_es(args.res_dir, )

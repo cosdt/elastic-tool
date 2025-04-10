@@ -23,10 +23,9 @@ class BenchmarkProcessor(ProcessorBase):
         commit_id: str,
         commit_title: str,
         created_at: str = None,
-        model_name: str = None,
         tag: str = None,
     ):
-        super().__init__(commit_id, commit_title, created_at, model_name)
+        super().__init__(commit_id, commit_title, created_at)
         self.schema: dict = VLLM_SCHEMA
         # Tag the schema for version control
         if tag:
@@ -89,7 +88,6 @@ class BenchmarkProcessor(ProcessorBase):
                     test_name=test_name,
                     tp=tp,
                     created_at=self.created_at,
-                    model_name=self.model_name,
                     **{
                         key: value
                         for key, value in data.items()

@@ -5,12 +5,10 @@ from escli_tool.handler import DataHandler
 
 class ProcessorBase(ABC):
 
-    def __init__(self, commit_id: str, commit_title, created_at: str,
-                 model_name: str):
+    def __init__(self, commit_id: str, commit_title, created_at: str):
         self.commit_id = commit_id
         self.commit_title = commit_title
         self.created_at = created_at
-        self.model_name = model_name
         self.handler = DataHandler.maybe_from_env_or_keyring()
 
     def fetch_from_es(self, index_name: str, size: int, source: bool = True):
