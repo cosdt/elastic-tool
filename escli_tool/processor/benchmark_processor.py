@@ -94,7 +94,7 @@ class BenchmarkProcessor(ProcessorBase):
                         if key in data_class.__annotations__.keys()
                     },
                 ))
-
+            
     def to_dict(self):
         """
         Convert the processed data to a dictionary format.
@@ -113,6 +113,8 @@ class BenchmarkProcessor(ProcessorBase):
             for entry in entries:
                 _id = self.makeup_id(entry)
                 self.handler.index_name = index_name
+                if hasattr(entry, 'request_rate'):
+                    print(entry.to_dict())
                 self.handler.add_single_data(id=_id, data=entry.to_dict())
 
     @staticmethod

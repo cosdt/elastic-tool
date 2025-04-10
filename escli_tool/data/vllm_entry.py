@@ -18,13 +18,15 @@ class ServingDataEntry(BaseDataEntry):
     request_throughput: float
     total_token_throughput: float
     model_id: str
-    model_name: str
+    model_name: str= field(init=False)
 
     def __post_init__(self):
         # Serving results do not have field model_name, for backward compatibility
         # we set model_id to model_name
         super().__post_init__()
         self.model_name = self.model_id
+        self.model_id = self.model_id.split("/")[-1]
+        self.model_name = self.model_name.split("/")[-1]
 
 # Throughput
 @dataclass
@@ -33,6 +35,9 @@ class ThroughputDataEntry(BaseDataEntry):
     tokens_per_second: float
     model_name: str
 
+    def __post_init__(self):
+        super().__post_init__()
+        self.model_name = self.model_name.split("/")[-1]
 
 # Latency
 @dataclass
@@ -59,6 +64,7 @@ class LatencyDataEntry(BaseDataEntry):
             raise ValueError("percentiles must contain keys '50' and '99'")
         self.median_latency = self.percentiles["50"]
         self.percentile_99 = self.percentiles["99"]
+        self.model_name = self.model_name.split("/")[-1]
 
 
 def convert_s_ms(time_second: float) -> float:
