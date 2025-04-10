@@ -44,7 +44,8 @@ class BenchmarkProcessor(ProcessorBase):
                     json_data = json.load(f)
                     res_map[Path(file_name).stem] = json_data
             except json.JSONDecodeError as e:
-                logger.error(f"can not read from json: {file_name}, error: {e}")
+                logger.error(
+                    f"can not read from json: {file_name}, error: {e}")
                 sys.exit(1)
         return res_map
 

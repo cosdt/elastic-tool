@@ -5,3 +5,4 @@ setuptools
 setuptools-scm
 requests
 keyring
+prettytable

@@ -1,7 +1,5 @@
 # registry.py
 # Register a processor to process json files
-from pyparsing import original_text_for
-
 from escli_tool.utils import get_logger
 
 logger = get_logger()
