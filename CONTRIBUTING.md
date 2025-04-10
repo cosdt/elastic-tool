@@ -5,14 +5,14 @@ Thank you for your interest in contributing to this project! We welcome all cont
 ## How to Contribute
 
 ### 1. Reporting Issues
-If you encounter a bug or have a question, please open an issue on the [Issues](https://github.com/your-repo/issues) page. When reporting an issue, please include:
+If you encounter a bug or have a question, please open an issue on the [Issues](https://github.com/Potabk/elastic-tool/issues) page. When reporting an issue, please include:
 - A clear and detailed description of the problem.
 - Steps to reproduce the issue.
 - Expected and actual behavior.
 - Environment details (e.g., operating system, Python version, etc.).
 
 ### 2. Requesting Features
-If you have a feature request, please open an issue on the [Issues](https://github.com/your-repo/issues) page. Describe your idea clearly and explain why it would be useful.
+If you have a feature request, please open an issue on the [Issues](https://github.com/Potabk/elastic-tool/issues) page. Describe your idea clearly and explain why it would be useful.
 
 ### 3. Improving Documentation
 Documentation is a critical part of this project. If you find any errors or areas for improvement, feel free to submit a Pull Request.
