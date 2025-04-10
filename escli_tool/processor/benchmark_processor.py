@@ -53,7 +53,7 @@ class BenchmarkProcessor(ProcessorBase):
         """
         Tag the schema with the given tag.
         """
-        if tag:
+        if tag and tag != "main":
             for key in self.schema.keys():
                 self.schema[key] = (f"{self.schema[key][0]}_{tag}",
                                     self.schema[key][1])

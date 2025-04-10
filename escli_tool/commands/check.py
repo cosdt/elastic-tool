@@ -35,7 +35,7 @@ def run(args):
     """Filter the commit id from the given file"""
     handler = DataHandler.maybe_from_env_or_keyring()
     index_name = args.index
-    if args.tag:
+    if args.tag and args.tag != 'main':
         index_name = f"{index_name}_{args.tag}"
     records = handler.search_data_from_vllm(index_name,
                                             source=args.source,

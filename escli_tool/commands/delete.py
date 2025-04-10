@@ -20,7 +20,7 @@ def run(args):
     """Delete a document from the given index and _id list. if no _id is provided, delete the index."""
     handler = DataHandler.maybe_from_env_or_keyring()
     index_name = args.index
-    if args.tag:
+    if args.tag and args.tag != 'main':
         index_name = f"{index_name}_{args.tag}"
     handler.index_name = index_name
     id_to_delete = args.id
