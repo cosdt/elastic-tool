@@ -60,7 +60,7 @@ setup(
     description=("elastic command line tool"),
     long_description=read_readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/Potabk/elastic-tool",
+    url="https://github.com/cosdt/elastic-tool",
     project_urls={
         "Homepage": "https://github.com/Potabk/elastic-tool",
     },

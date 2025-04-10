@@ -1,6 +1,6 @@
 # Release Note
 
-## v0.0.1 
+## v0.1.0 
 
 ### Highlights
 - Initial release of the project.
@@ -17,3 +17,8 @@
 - Included `CONTRIBUTING.md` to guide contributors.
 - Added `pytest` support for running unit tests.
 - Improved documentation for all commands and usage examples.
+
+## v0.1.1 
+
+### bugfix
+- Fixed keyring no recommended backend was available bug
