@@ -9,20 +9,10 @@ logger = get_logger()
 
 
 def register_subcommand(subparsers: _SubParsersAction):
-    parser = subparsers.add_parser("search", help="search for an existed _id")
-    parser.add_argument("--index",
-                        required=True,
-                        help="The index name to search")
-    parser.add_argument("--source",
-                        action="store_true",
-                        help="Whether to expand details")
-    parser.add_argument("--commit_id",
-                        required=False,
-                        help="Optional commit hash to search")
-
+    parser = subparsers.add_parser("analysis", help="analysis if the data is valid")
     parser.add_argument("--size",
                         required=False,
-                        default=1000,
+                        default=10,
                         type=int,
                         help="Size to search")
     parser.add_argument("--tag",
@@ -32,7 +22,7 @@ def register_subcommand(subparsers: _SubParsersAction):
 
 
 def run(args):
-    """Search for an existed _id in the given index"""
+    """Analysis the latest 10 commits, ensure the data is credible"""
     handler = DataHandler.maybe_from_env_or_keyring()
     index_name = args.index
     if args.tag and args.tag != 'main':

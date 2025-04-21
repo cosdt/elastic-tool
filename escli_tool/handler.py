@@ -81,6 +81,25 @@ class DataHandler:
             print(json.loads(resp.text))
         except Exception as e:
             logger.info(f"create table with property type error:\n{e}")
+    
+    def delete_index_with_by_field(self, index_name: str,  field_name: str):
+        try:
+            url = f"{self.domain}/{index_name}/_delete_by_query"
+            data = {
+                "query": {
+                    "match": {
+                        field_name: "true"
+                    }
+                }
+            }
+            resp = requests.post(url=url,
+                                 headers=self.headers,
+                                 data=json.dumps(data),
+                                 verify=False)
+            print(json.loads(resp.text))
+        except Exception as e:
+            logger.info(f"delete table with field error:\n{e}")
+
 
     def get_table_property_type(self):
         try:
@@ -282,7 +301,7 @@ class DataHandler:
         url = f"{self.domain}/{_index}/_search"
         data = {
             "_source": source,
-            "size": 1000,
+            "size": size,
             "query": {
                 "match_all": {}
             },
@@ -295,6 +314,28 @@ class DataHandler:
                              json=data,
                              verify=False)
         return resp.json()
+    
+    def condition_search(self, index_name: str, conditions: dict) -> List[dict]:
+        """
+        Perform a condition search on the specified index.
+        :param index_name: The name of the index to search.
+        :param conditions: A dictionary of conditions for the search.
+        :return: The search results.
+        """
+        res = []
+        full_data = self.search_data_from_vllm(index_name, source=True)
+        if not full_data or "hits" not in full_data:
+            logger.error(f"No data found in {index_name}")
+            return None
+        hits = full_data["hits"]["hits"]
+        if not hits:
+            logger.error(f"No data found in {index_name}")
+            return None
+        for hit in hits:
+            source = hit["_source"]
+            if all(source.get(k) == v for k, v in conditions.items()):
+                res.append(hit)
+        return res
 
     def get_field_value(self, index_name, fields: List[str]) -> List[dict]:
         data = self.search_data_from_vllm(index_name, source=True)
@@ -395,17 +436,17 @@ class DataHandler:
 
         for field, condition in conditions.items():
             if isinstance(condition, dict):  # 处理 range 查询
-                query["query"]["bool"]["must"].append(
+                query["bool"]["must"].append(
                     {"range": {
                         field: condition
                     }})
             elif isinstance(condition, list):  # 处理 terms 查询
-                query["query"]["bool"]["must"].append(
+                query["bool"]["must"].append(
                     {"terms": {
                         field: condition
                     }})
             else:  # 处理 match 查询（单个值）
-                query["query"]["bool"]["must"].append(
+                query["bool"]["must"].append(
                     {"match": {
                         field: condition
                     }})
@@ -418,16 +459,18 @@ class DataHandler:
             "size": 10000,
             "query": query,
         }  # 只获取 _id，最多 10000 条
+        print(f"payload: {json.dumps(payload, indent=2)}")
         try:
             resp = requests.post(url,
                                  headers=header,
-                                 data=payload,
+                                 json=payload,
                                  verify=False)
             resp.raise_for_status()
             hits = resp.json().get("hits", {}).get("hits", [])
             return [hit["_id"] for hit in hits]
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
+            print(f"Response content: {resp.text if 'resp' in locals() else 'No response'}")
             return []
 
     def update_data_for_exist_id(self, index_name: str, id: str, data: dict):
