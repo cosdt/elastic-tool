@@ -2,7 +2,7 @@
 
 import argparse
 
-from escli_tool.commands import add, check, create, delete, login, search, analysis
+from escli_tool.commands import add, check, create, delete, login, search
 from escli_tool.utils import get_logger
 
 logger = get_logger()
@@ -20,7 +20,6 @@ def main():
     add.register_subcommand(subparsers)
     delete.register_subcommand(subparsers)
     check.register_subcommand(subparsers)
-    analysis.register_subcommand(subparsers)
 
     args = parser.parse_args()
 

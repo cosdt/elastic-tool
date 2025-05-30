@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Union
 
-from websockets import Data
 
 from escli_tool.common import VLLM_SCHEMA
 from escli_tool.handler import DataHandler
