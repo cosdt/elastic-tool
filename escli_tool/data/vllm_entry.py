@@ -1,6 +1,16 @@
 from dataclasses import dataclass, field
+from enum import Enum
 
 from escli_tool.data.base import BaseDataEntry
+
+
+class BenchmarkStatus(Enum):
+    NORMAL = "normal"
+    ERROR = "error"
+    SKIP = "skip"
+
+    def __str__(self):
+        return self.value
 
 
 @dataclass
@@ -34,6 +44,7 @@ class ThroughputDataEntry(BaseDataEntry):
     requests_per_second: float
     tokens_per_second: float
     model_name: str
+    status: str=BenchmarkStatus.NORMAL.value
 
     def __post_init__(self):
         super().__post_init__()

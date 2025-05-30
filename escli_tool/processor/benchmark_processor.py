@@ -3,7 +3,7 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Union, overload, override
 
 from escli_tool.common import VLLM_SCHEMA
 from escli_tool.data.vllm_entry import BaseDataEntry
@@ -28,8 +28,8 @@ class BenchmarkProcessor(ProcessorBase):
         super().__init__(commit_id, commit_title, created_at)
         self.schema: dict = VLLM_SCHEMA
         # Tag the schema for version control
-        if tag:
-            self.tag_schema(tag)
+        # if tag:
+        #     self.tag_schema(tag)
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}
 
     @staticmethod
@@ -104,7 +104,7 @@ class BenchmarkProcessor(ProcessorBase):
             result[index_name] = [entry.to_dict() for entry in entries]
         return result
 
-    def send_to_es(self, folder_path: str):
+    def send_normal(self, folder_path: str):
         """
         Send the processed data to Elasticsearch.
         """
@@ -116,6 +116,23 @@ class BenchmarkProcessor(ProcessorBase):
                 if hasattr(entry, 'request_rate'):
                     print(entry.to_dict())
                 self.handler.add_single_data(id=_id, data=entry.to_dict())
+    
+    def send_error(self, error_message: str):
+        """
+        Send error message to Elasticsearch.
+        """
+        error_entry = {
+            'commit_id': self.commit_id,
+            'commit_title': self.commit_title,
+            'created_at': self.created_at,
+            'error_message': error_message,
+        }
+        self.handler.index_name = 'error_log'
+        _id = f"error_{self.commit_id}"
+        self.handler.add_single_data(id=_id, data=error_entry)
+    
+    def send_skip(self):
+        pass
 
     @staticmethod
     def makeup_id(entry: BaseDataEntry) -> str:

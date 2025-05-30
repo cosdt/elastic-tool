@@ -39,4 +39,4 @@ def run(args):
         args.created_at,
         args.tag,
     )
-    processor.send_to_es(args.res_dir, )
+    processor.send_normal(args.res_dir, )
