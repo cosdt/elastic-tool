@@ -1,4 +1,6 @@
 # escli_tool/commands/create.py
+import os
+
 from email.policy import default
 from escli_tool.registry import get_class
 
@@ -41,4 +43,7 @@ def run(args):
         args.created_at,
         args.tag,
     )
-    processor.send_normal(args.res_dir, )
+    if os.path.exists(args.res_dir):
+        processor.send_normal(args.res_dir, )
+    else:
+        processor.send_error()

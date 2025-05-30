@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Union
 
-from sympy import im
+import torch
 
 
 from escli_tool.common import VLLM_SCHEMA_V1
@@ -29,11 +29,10 @@ class BenchmarkProcessor(ProcessorBase):
         created_at: str = None,
         vllm_branch: str = "v0.9.0",
         vllm_ascend_branch: str = "main",
-        device: str = "Ascend910B3",
     ):
         super().__init__(commit_id, commit_title, created_at)
         self.schema: dict = VLLM_SCHEMA_V1
-        self.device = device
+        self.device = torch.npu.get_device_name(0)
         self.vllm_branch = vllm_branch
         self.vllm_ascend_branch = vllm_ascend_branch
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}

@@ -25,9 +25,6 @@ def register_subcommand(subparsers: _SubParsersAction):
                         default=1000,
                         type=int,
                         help="Size to search")
-    parser.add_argument("--tag",
-                        required=False,
-                        help="Which version to search")
     parser.set_defaults(func=run)
 
 
@@ -35,8 +32,6 @@ def run(args):
     """Filter the commit id from the given file"""
     handler = DataHandler.maybe_from_env_or_keyring()
     index_name = args.index
-    if args.tag and args.tag != 'main':
-        index_name = f"{index_name}_{args.tag}"
     records = handler.search_data_from_vllm(index_name,
                                             source=args.source,
                                             size=args.size)
