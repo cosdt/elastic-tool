@@ -9,7 +9,12 @@ class BaseDataEntry:
     commit_id: str
     commit_title: str
     test_name: str
+    vllm_branch: str
+    vllm_ascend_branch: str
+    workflow_id: str
+    device: str
     tp: int
+    extra_features: Dict[str, str]
     created_at: Union[str, None]
 
     def __post_init__(self):
