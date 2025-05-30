@@ -3,10 +3,14 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Union, overload, override
+from typing import Dict, List, Union
 
-from escli_tool.common import VLLM_SCHEMA
+from sympy import im
+
+
+from escli_tool.common import VLLM_SCHEMA_V1
 from escli_tool.data.vllm_entry import BaseDataEntry
+from escli_tool.data.vllm_entry import BenchmarkStatus
 from escli_tool.processor.processor_base import ProcessorBase
 from escli_tool.registry import register_class
 from escli_tool.utils import get_logger
@@ -23,13 +27,15 @@ class BenchmarkProcessor(ProcessorBase):
         commit_id: str,
         commit_title: str,
         created_at: str = None,
-        tag: str = None,
+        vllm_branch: str = "v0.9.0",
+        vllm_ascend_branch: str = "main",
+        device: str = "Ascend910B3",
     ):
         super().__init__(commit_id, commit_title, created_at)
-        self.schema: dict = VLLM_SCHEMA
-        # Tag the schema for version control
-        # if tag:
-        #     self.tag_schema(tag)
+        self.schema: dict = VLLM_SCHEMA_V1
+        self.device = device
+        self.vllm_branch = vllm_branch
+        self.vllm_ascend_branch = vllm_ascend_branch
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}
 
     @staticmethod
@@ -71,27 +77,28 @@ class BenchmarkProcessor(ProcessorBase):
         commit_title = self.commit_title
         json_data = self._read_from_json(folder_path)
         # Instanceiate the data class dynamically from the schema
-        for test_name, data in json_data.items():
+        for test_name, benchmark_results in json_data.items():
             test_prefix = str.split(test_name, "_")[0]
             tp = self.extract_tp_value(test_name)
-            data_entry = self.schema.get(test_prefix)
-            if not data_entry:
+            benchmark_tuple = self.schema.get(test_prefix)
+            if not benchmark_tuple:
                 logger.warning(f"Unknown test prefix: {test_prefix}")
                 continue
-            index_name, data_class = data_entry
+            index_name, benchmark_data_class = benchmark_tuple
             if not self.data_instance.get(index_name):
                 self.data_instance[index_name] = []
             self.data_instance[index_name].append(
-                data_class(
+                benchmark_data_class(
                     commit_id=commit_id,
                     commit_title=commit_title,
                     test_name=test_name,
                     tp=tp,
                     created_at=self.created_at,
+                    device=self.device,
                     **{
                         key: value
-                        for key, value in data.items()
-                        if key in data_class.__annotations__.keys()
+                        for key, value in benchmark_results.items()
+                        if key in benchmark_data_class.__annotations__.keys()
                     },
                 ))
             
@@ -121,18 +128,22 @@ class BenchmarkProcessor(ProcessorBase):
         """
         Send error message to Elasticsearch.
         """
-        error_entry = {
-            'commit_id': self.commit_id,
-            'commit_title': self.commit_title,
-            'created_at': self.created_at,
-            'error_message': error_message,
-        }
-        self.handler.index_name = 'error_log'
-        _id = f"error_{self.commit_id}"
-        self.handler.add_single_data(id=_id, data=error_entry)
+        for _, data_entry in self.schema:
+            index_name, _ = data_entry
+            err_id_to_save = self.commit_id[:8] + "_error"
+            self.handler.index_name = index_name
+            self.handler.add_single_data(id=err_id_to_save, data={"status": BenchmarkStatus.ERROR.value})
+
     
     def send_skip(self):
-        pass
+        """
+        Send skip message to Elasticsearch.
+        """
+        for _, data_entry in self.schema:
+            index_name, _ = data_entry
+            skip_id_to_save = self.commit_id[:8] + "_skip"
+            self.handler.index_name = index_name
+            self.handler.add_single_data(id=skip_id_to_save, data={"status": BenchmarkStatus.SKIP.value})
 
     @staticmethod
     def makeup_id(entry: BaseDataEntry) -> str:

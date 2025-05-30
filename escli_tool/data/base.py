@@ -11,11 +11,10 @@ class BaseDataEntry:
     test_name: str
     vllm_branch: str
     vllm_ascend_branch: str
-    workflow_id: str
     device: str
     tp: int
-    extra_features: Dict[str, str]
     created_at: Union[str, None]
+    extra_features: Dict[str, str]
 
     def __post_init__(self):
         if not self.created_at:

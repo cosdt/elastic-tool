@@ -29,6 +29,7 @@ class ServingDataEntry(BaseDataEntry):
     total_token_throughput: float
     model_id: str
     model_name: str= field(init=False)
+    status: str=BenchmarkStatus.NORMAL.value
 
     def __post_init__(self):
         # Serving results do not have field model_name, for backward compatibility
@@ -59,6 +60,7 @@ class LatencyDataEntry(BaseDataEntry):
     mean_latency: float = field(init=False)
     median_latency: float = field(init=False)
     percentile_99: float = field(init=False)
+    status: str=BenchmarkStatus.NORMAL.value
 
     def __post_init__(self):
         super().__post_init__()

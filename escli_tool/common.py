@@ -10,6 +10,12 @@ VLLM_SCHEMA = {
     "throughput": ("vllm_benchmark_throughput", ThroughputDataEntry),
 }
 
+VLLM_SCHEMA_V1 = {
+    "serving": ("vllm_benchmark_serving_v1", ServingDataEntry),
+    "latency": ("vllm_benchmark_latency_v1", LatencyDataEntry),
+    "throughput": ("vllm_benchmark_throughput_v1", ThroughputDataEntry),
+}
+
 VLLM_SCHEMA_TEST = {
     'serving': ('vllm_benchmark_serving_test1', ServingDataEntry),
     "latency": ("vllm_benchmark_latency_test1", LatencyDataEntry),
