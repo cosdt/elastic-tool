@@ -20,6 +20,9 @@ class BaseDataEntry:
         if not self.created_at:
             self.created_at = datetime.now().isoformat()
 
+        if not self.extra_features:
+            self.extra_features = {}
+
     def to_dict(self) -> Dict:
         return asdict(self)
     
