@@ -1,9 +1,12 @@
 # escli_tool/commands/create.py
+import argparse
+from ast import main
 import json
 from argparse import _SubParsersAction
 
 from escli_tool.handler import DataHandler
 from escli_tool.utils import get_logger
+from escli_tool.common import VLLM_SCHEMA
 
 logger = get_logger()
 
@@ -24,29 +27,24 @@ def register_subcommand(subparsers: _SubParsersAction):
 def run(args):
     """Analysis the latest 10 commits, ensure the data is credible"""
     handler = DataHandler.maybe_from_env_or_keyring()
-    index_name = args.index
-    if args.tag and args.tag != 'main':
-        index_name = f"{index_name}_{args.tag}"
-    res = handler.search_data_from_vllm(index_name,
-                                        source=args.source,
-                                        size=args.size)
-    print_formatted_results(res)
-    return res
+    serving_data = []
+    throughput_data = []
+    latency_data = []
+    for index_name, _ in VLLM_SCHEMA.values():
+        if args.tag and args.tag != 'main':
+            index_name = f"{index_name}_{args.tag}"
+        res = handler.search_data_from_vllm(index_name,
+                                            source=True,
+                                            size=args.size)
+        if index_name == 'vllm_benchmark_serving':
+            serving_data = res
+        elif index_name == 'vllm_benchmark_throughput':
+            throughput_data = res
+        elif index_name == 'vllm_benchmark_latency':
+            latency_data = res
 
+    print(f"Serving data: {serving_data}")
 
-def print_formatted_results(res):
-    """Format and print the search results"""
-    if not res or 'hits' not in res or 'hits' not in res['hits']:
-        print("No results found.")
-        return
-    print(f"Search took: {res['took']}ms")
-    print(f"Total hits: {res['hits']['total']['value']}")
-    print("-" * 50)
+    # print(f"Throughput data: {throughput_data}")
+    # print(f"Latency data: {latency_data}")
 
-    for hit in res['hits']['hits']:
-        print(f"Index: {hit['_index']}")
-        print(f"ID: {hit['_id']}")
-        if '_source' in hit:
-            print("Source:")
-            print(json.dumps(hit['_source'], indent=4))
-        print("-" * 50)
