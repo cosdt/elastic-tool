@@ -53,6 +53,10 @@ def print_formatted_results(res):
     print(f"Total hits: {res['hits']['total']['value']}")
     print("-" * 50)
 
+    print("================= Search Results =================")
+    res_len = len(res['hits']['hits'])
+    print(f"Number of hits: {res_len}")
+    print("==================================================")
     for hit in res['hits']['hits']:
         print(f"Index: {hit['_index']}")
         print(f"ID: {hit['_id']}")
