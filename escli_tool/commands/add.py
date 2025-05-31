@@ -41,7 +41,6 @@ def run(args):
         args.commit_id,
         args.commit_title,
         args.created_at,
-        args.tag,
     )
     if os.path.exists(args.res_dir):
         processor.send_normal(args.res_dir, )
