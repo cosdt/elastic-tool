@@ -14,7 +14,7 @@ def register_subcommand(subparsers: _SubParsersAction):
                         default=None,
                         help="Text file to filter the commit id")
     parser.add_argument("--index",
-                        default='vllm_benchmark_throughput',
+                        default='vllm_benchmark_throughput_v1',
                         help="The index name to search")
     parser.add_argument("--source",
                         action="store_true",
