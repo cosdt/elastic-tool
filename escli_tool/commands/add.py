@@ -18,6 +18,8 @@ def register_subcommand(subparsers):
     parser.add_argument("--commit_title", help="Commit massage")
     parser.add_argument("--created_at",
                         help="What time current commit is submitted")
+    parser.add_argument("--skip", action='store_true', default=False,
+                        help="Save the data as a skipped commit")
     parser.set_defaults(func=run)
 
 
@@ -34,14 +36,18 @@ def run(args):
         # Set default processor to benchmark
         processor_name = 'benchmark'
     # TODO: do not only read data from local dir, but also read dict user customized
-    if not args.res_dir:
-        raise ValueError("Result dir is required")
 
     processor = get_class(processor_name)(
         args.commit_id,
         args.commit_title,
         args.created_at,
+        args.vllm_branch,
+        args.vllm_ascend_branch,
     )
+    if args.skip:
+        processor.send_skip()
+        return
+    
     if os.path.exists(args.res_dir):
         processor.send_normal(args.res_dir, )
     else:

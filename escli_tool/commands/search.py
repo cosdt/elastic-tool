@@ -25,9 +25,6 @@ def register_subcommand(subparsers: _SubParsersAction):
                         default=1000,
                         type=int,
                         help="Size to search")
-    parser.add_argument("--tag",
-                        required=False,
-                        help="Which version to search")
     parser.set_defaults(func=run)
 
 

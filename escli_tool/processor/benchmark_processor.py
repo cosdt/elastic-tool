@@ -129,18 +129,28 @@ class BenchmarkProcessor(ProcessorBase):
             index_name, _ = data_entry
             err_id_to_save = self.commit_id[:8] + "_error"
             self.handler.index_name = index_name
-            self.handler.add_single_data(id=err_id_to_save, data={"status": BenchmarkStatus.ERROR.value})
+            self.handler.add_single_data(id=err_id_to_save, data={
+                "status": BenchmarkStatus.ERROR.value,
+                "commit_id": self.commit_id,
+                "commit_title": self.commit_title,
+                "created_at": self.created_at,
+                })
 
     
     def send_skip(self):
         """
         Send skip message to Elasticsearch.
         """
-        for _, data_entry in self.schema:
+        for _, data_entry in self.schema.items():
             index_name, _ = data_entry
             skip_id_to_save = self.commit_id[:8] + "_skip"
             self.handler.index_name = index_name
-            self.handler.add_single_data(id=skip_id_to_save, data={"status": BenchmarkStatus.SKIP.value})
+            self.handler.add_single_data(id=skip_id_to_save, data={
+                "status": BenchmarkStatus.SKIP.value,
+                "commit_id": self.commit_id,
+                "commit_title": self.commit_title,
+                "created_at": self.created_at,
+                })
 
     @staticmethod
     def makeup_id(entry: BaseDataEntry) -> str:
