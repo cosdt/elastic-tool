@@ -92,6 +92,9 @@ class BenchmarkProcessor(ProcessorBase):
                     tp=tp,
                     created_at=self.created_at,
                     device=self.device,
+                    vllm_branch=self.vllm_branch,
+                    vllm_ascend_branch=self.vllm_ascend_branch,
+                    extra_features=None,  # type: ignore
                     **{
                         key: value
                         for key, value in benchmark_results.items()

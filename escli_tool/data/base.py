@@ -14,7 +14,7 @@ class BaseDataEntry:
     device: str
     tp: int
     created_at: Union[str, None]
-    extra_features: Dict[str, str]
+    extra_features: Union[dict, None]
 
     def __post_init__(self):
         if not self.created_at:

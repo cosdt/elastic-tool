@@ -1,6 +1,6 @@
 # escli_tool/commands/create.py
 from ast import main
-from escli_tool.common import VLLM_SCHEMA
+from escli_tool.common import VLLM_SCHEMA_V1
 from escli_tool.handler import DataHandler
 from escli_tool.utils import get_logger
 
@@ -10,7 +10,6 @@ logger = get_logger()
 def register_subcommand(subparsers):
     parser = subparsers.add_parser(
         "delete", help="Delete a existed _id in the given index")
-    parser.add_argument("--tag", default=None, help="Which version to save")
     parser.add_argument("--index", help="index name")
     parser.add_argument("--id",
                         help="IDs to delete (accepts multiple IDs)",
@@ -38,9 +37,7 @@ def run(args):
     if args.commit_id:
         id_to_delete = []
 
-        for index_name, _ in VLLM_SCHEMA.values():
-            if args.tag and args.tag != 'main':
-                index_name = f"{index_name}_{args.tag}"
+        for index_name, _ in VLLM_SCHEMA_V1.values():
             res = handler.condition_search(index_name, {"commit_id": args.commit_id})
             if res:
                 for hit in res:
@@ -50,8 +47,6 @@ def run(args):
             handler.delete_id_list_with_bulk_insert(id_to_delete)
         return
     index_name = args.index
-    if args.tag and args.tag != 'main':
-        index_name = f"{index_name}_{args.tag}"
     handler.index_name = index_name
     id_to_delete = args.id
     if not id_to_delete:
