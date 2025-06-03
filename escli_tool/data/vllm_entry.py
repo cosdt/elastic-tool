@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
+from matplotlib.pyplot import flag
+
 from escli_tool.data.base import BaseDataEntry
 
 
@@ -28,6 +30,7 @@ class ServingDataEntry(BaseDataEntry):
     request_throughput: float
     total_token_throughput: float
     model_id: str
+    output_throughput: float
     model_name: str= field(init=False)
     status: str=BenchmarkStatus.NORMAL.value
 
