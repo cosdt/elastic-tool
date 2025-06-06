@@ -1,5 +1,6 @@
 # escli_tool/commands/create.py
 import os
+import json
 
 from email.policy import default
 from escli_tool.registry import get_class
@@ -18,6 +19,8 @@ def register_subcommand(subparsers):
     parser.add_argument("--commit_title", help="Commit massage")
     parser.add_argument("--created_at",
                         help="What time current commit is submitted")
+    parser.add_argument("--extra_feat", type=json.loads, default={},
+                    help="Extra feature as JSON string")
     parser.add_argument("--skip", action='store_true', default=False,
                         help="Save the data as a skipped commit")
     parser.set_defaults(func=run)
@@ -43,6 +46,7 @@ def run(args):
         args.created_at,
         args.vllm_branch,
         args.vllm_ascend_branch,
+        args.extra_feat,
     )
     if args.skip:
         processor.send_skip()

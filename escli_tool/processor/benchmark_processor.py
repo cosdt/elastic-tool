@@ -27,12 +27,14 @@ class BenchmarkProcessor(ProcessorBase):
         created_at: str = None,
         vllm_branch: str = "v0.9.0",
         vllm_ascend_branch: str = "main",
+        extra_features: dict = {},
     ):
         super().__init__(commit_id, commit_title, created_at)
         self.schema: dict = VLLM_SCHEMA_V1
         self.device = "Ascend910B3"
         self.vllm_branch = vllm_branch
         self.vllm_ascend_branch = vllm_ascend_branch
+        self.extra_features = extra_features
         self.data_instance: Dict[str, List[BaseDataEntry]] = {}
 
     @staticmethod
@@ -94,7 +96,7 @@ class BenchmarkProcessor(ProcessorBase):
                     device=self.device,
                     vllm_branch=self.vllm_branch,
                     vllm_ascend_branch=self.vllm_ascend_branch,
-                    extra_features=None,  # type: ignore
+                    extra_features=self.extra_features,  # type: ignore
                     **{
                         key: value
                         for key, value in benchmark_results.items()
@@ -124,7 +126,7 @@ class BenchmarkProcessor(ProcessorBase):
                     print(entry.to_dict())
                 self.handler.add_single_data(id=_id, data=entry.to_dict())
     
-    def send_error(self, error_message: str):
+    def send_error(self):
         """
         Send error message to Elasticsearch.
         """
