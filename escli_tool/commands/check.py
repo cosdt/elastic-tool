@@ -41,7 +41,8 @@ def run(args):
         _source = hit.get('_source')
         if _source:
             commit_id = _source.get('commit_id')
-            if commit_id:
+            status = _source.get('status', 'normal')
+            if commit_id and status!="error":
                 recorded_commits.add(commit_id)
             else:
                 # For backward compatibility, if commit_id is not found, use the _id
