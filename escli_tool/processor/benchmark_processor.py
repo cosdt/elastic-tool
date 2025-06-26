@@ -130,7 +130,7 @@ class BenchmarkProcessor(ProcessorBase):
         """
         Send error message to Elasticsearch.
         """
-        for _, data_entry in self.schema:
+        for _, data_entry in self.schema.items():
             index_name, _ = data_entry
             err_id_to_save = self.commit_id[:8] + "_error"
             self.handler.index_name = index_name
@@ -140,7 +140,6 @@ class BenchmarkProcessor(ProcessorBase):
                 "commit_title": self.commit_title,
                 "created_at": self.created_at,
                 })
-
 
     def send_skip(self):
         """

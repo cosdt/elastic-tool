@@ -11,7 +11,7 @@ def register_subcommand(subparsers):
                                    help="Insert a new _id in the given index")
     parser.add_argument("--vllm_branch", default="v0.9.0", help="vllm version")
     parser.add_argument("--vllm_ascend_branch", default="main", help="vllm-ascend version")
-    parser.add_argument("--res_dir", default=None,
+    parser.add_argument("--res_dir", default="",
                         help="Result dir which include json files")
     parser.add_argument("--processor",
                         help="Processor selected to process json files")
