@@ -141,7 +141,7 @@ class BenchmarkProcessor(ProcessorBase):
                 "created_at": self.created_at,
                 })
 
-    
+
     def send_skip(self):
         """
         Send skip message to Elasticsearch.

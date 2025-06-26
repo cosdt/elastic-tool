@@ -2,8 +2,8 @@
 import os
 import json
 
-from email.policy import default
 from escli_tool.registry import get_class
+from escli_tool.utils import is_normal
 
 
 def register_subcommand(subparsers):
@@ -23,6 +23,7 @@ def register_subcommand(subparsers):
                     help="Extra feature as JSON string")
     parser.add_argument("--skip", action='store_true', default=False,
                         help="Save the data as a skipped commit")
+    parser.add_argument("--error", default="", help="Error message if the result is not normal")
     parser.set_defaults(func=run)
 
 
@@ -51,8 +52,8 @@ def run(args):
     if args.skip:
         processor.send_skip()
         return
-    
-    if os.path.exists(args.res_dir):
-        processor.send_normal(args.res_dir, )
+
+    if is_normal(args.res_dir, args.error):
+        processor.send_normal(args.res_dir)
     else:
         processor.send_error()

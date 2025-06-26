@@ -1,4 +1,5 @@
 import json
+import os
 import logging
 from pathlib import Path
 from typing import Union
@@ -28,3 +29,13 @@ def load_credentials():
     domain = keyring.get_password("escli", "domain")
     token = keyring.get_password("escli", "token")
     return domain, token
+
+def is_normal(res_dir, error):
+    """
+    Check if the results is a normal
+    """
+    if not os.path.exists(res_dir):
+        return False
+    if error:
+        return False
+    return True

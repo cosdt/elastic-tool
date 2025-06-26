@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
-from matplotlib.pyplot import flag
-
 from escli_tool.data.base import BaseDataEntry
 
 
