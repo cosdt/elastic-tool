@@ -35,6 +35,9 @@ def get_requirements() -> List[str]:
             requirements = f.read().strip().split("\n")
         resolved_requirements = []
         for line in requirements:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
             if line.startswith("-r "):
                 resolved_requirements += _read_requirements(line.split()[1])
             elif line.startswith("--"):
@@ -44,10 +47,10 @@ def get_requirements() -> List[str]:
         return resolved_requirements
 
     try:
-        requirements = _read_requirements("requirements.txt")
-    except ValueError:
+        return _read_requirements("requirements.txt")
+    except FileNotFoundError:
         print("Failed to read requirements.txt.")
-    return requirements
+        return []
 
 
 setup(
@@ -56,20 +59,27 @@ setup(
     # https://packaging.python.org/en/latest/specifications/version-specifiers
     version=VERSION,
     author="Li Wang",
+    author_email="wangli858794774@gmail.com",
     license="Apache 2.0",
-    description=("elastic command line tool"),
+    description="Elastic command line tool",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     url="https://github.com/Potabk/elastic-tool",
     project_urls={
         "Homepage": "https://github.com/Potabk/elastic-tool",
+        "Bug Tracker": "https://github.com/Potabk/elastic-tool/issues",
+        "Changelog":
+        "https://github.com/Potabk/elastic-tool/blob/main/CHANGELOG.md",
     },
+    keywords=["elasticsearch", "cli", "devops"],
     classifiers=[
+        "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: Apache Software License",
+        "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Intended Audience :: Information Technology",
         "Intended Audience :: Science/Research",
